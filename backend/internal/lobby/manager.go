@@ -3,6 +3,7 @@ package lobby
 import (
 	"errors"
 	"math/rand"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -19,6 +20,7 @@ type Lobby struct {
 }
 
 type Lobbies struct {
+	mu      sync.RWMutex
 	Lobbies map[string]*Lobby
 }
 
@@ -56,6 +58,9 @@ func (l *Lobbies) GetLobbyCode() string {
 }
 
 func (l *Lobbies) NewLobby(player Player) string {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
 	code := l.GetLobbyCode()
 	lobby := &Lobby{
 		Code:    code,
@@ -66,6 +71,9 @@ func (l *Lobbies) NewLobby(player Player) string {
 }
 
 func (l *Lobbies) JoinLobby(code string, player Player) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
 	lobby, exists := l.Lobbies[code]
 	if !exists {
 		return errors.New("lobby not found")
