@@ -7,11 +7,11 @@ import (
 )
 
 type Handler struct {
-	lobbies *lobby.Lobbies
+	Lobbies *lobby.Lobbies
 }
 
 func NewHandler(lobbies *lobby.Lobbies) *Handler {
-	return &Handler{lobbies: lobbies}
+	return &Handler{Lobbies: lobbies}
 }
 
 func (h *Handler) Health(w http.ResponseWriter, _ *http.Request) {
@@ -29,7 +29,7 @@ func (h *Handler) CreateLobby(w http.ResponseWriter, r *http.Request) {
 	}
 
 	player := lobby.NewPlayer(req.Nickname)
-	code := h.lobbies.NewLobby(player)
+	code := h.Lobbies.NewLobby(player)
 
 	writeJSON(w, http.StatusCreated, map[string]any{
 		"code":   code,
@@ -38,7 +38,26 @@ func (h *Handler) CreateLobby(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) JoinLobby(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		Nickname  string `json:"nickname"`
+		LobbyCode string `json:"code"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Nickname == "" {
+		writeError(w, http.StatusBadRequest, "nickname required")
+		return
+	}
 
+	player := lobby.NewPlayer(req.Nickname)
+
+	if err := h.Lobbies.JoinLobby(req.LobbyCode, player); err != nil {
+		writeError(w, http.StatusNotFound, err.Error())
+		return
+	}
+
+	lobby, _ := h.Lobbies.GetLobby(req.LobbyCode)
+	writeJSON(w, http.StatusOK, map[string]any{
+		"players": lobby.Players,
+	})
 }
 
 // ---------------------------------------------------------------------------

@@ -70,6 +70,13 @@ func (l *Lobbies) NewLobby(player Player) string {
 	return code
 }
 
+func (l *Lobbies) GetLobby(code string) (*Lobby, bool) {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+	lobby, ok := l.Lobbies[code]
+	return lobby, ok
+}
+
 func (l *Lobbies) JoinLobby(code string, player Player) error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
