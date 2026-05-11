@@ -48,7 +48,7 @@ func generateCode() string {
 	return string(b)
 }
 
-func (l *Lobbies) GetLobbyCode() string {
+func (l *Lobbies) getLobbyCode() string {
 	for {
 		code := generateCode()
 		if _, exists := l.Lobbies[code]; !exists {
@@ -61,7 +61,7 @@ func (l *Lobbies) NewLobby(player Player) string {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	code := l.GetLobbyCode()
+	code := l.getLobbyCode()
 	lobby := &Lobby{
 		Code:    code,
 		Players: []Player{player},
