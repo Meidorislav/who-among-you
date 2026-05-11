@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"who-among-you/internal/game"
 	"who-among-you/internal/httpapi"
 	"who-among-you/internal/lobby"
 	"who-among-you/internal/ws"
@@ -16,7 +17,8 @@ import (
 func main() {
 	lobbies := lobby.InitLobbies()
 	hub := ws.NewHub()
-	handler := httpapi.NewHandler(lobbies, hub)
+	games := game.NewManager(game.NewMockQuestions(), hub)
+	handler := httpapi.NewHandler(lobbies, hub, games)
 	hub.SetHandler(handler)
 	go hub.Run()
 

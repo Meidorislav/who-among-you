@@ -3,6 +3,7 @@ package httpapi
 import (
 	"encoding/json"
 	"net/http"
+	"who-among-you/internal/game"
 	"who-among-you/internal/lobby"
 	"who-among-you/internal/ws"
 
@@ -13,10 +14,11 @@ import (
 type Handler struct {
 	Lobbies *lobby.Lobbies
 	Hub     *ws.Hub
+	Games   *game.Manager
 }
 
-func NewHandler(lobbies *lobby.Lobbies, hub *ws.Hub) *Handler {
-	return &Handler{Lobbies: lobbies, Hub: hub}
+func NewHandler(lobbies *lobby.Lobbies, hub *ws.Hub, games *game.Manager) *Handler {
+	return &Handler{Lobbies: lobbies, Hub: hub, Games: games}
 }
 
 var upgrader = websocket.Upgrader{
@@ -122,6 +124,15 @@ func (h *Handler) HandleMessage(playerID uuid.UUID, lobbyCode string, data []byt
 			return
 		}
 		h.handleSetReady(lobbyCode, playerID, msg.Ready)
+
+	case "vote":
+		var msg struct {
+			TargetPlayerID uuid.UUID `json:"target_player_id"`
+		}
+		if err := json.Unmarshal(data, &msg); err != nil {
+			return
+		}
+		h.Games.Vote(lobbyCode, playerID, msg.TargetPlayerID)
 	}
 }
 
@@ -133,7 +144,16 @@ func (h *Handler) handleSetReady(code string, playerID uuid.UUID, ready bool) {
 	h.broadcastLobbyState(snap)
 	if gameStarted {
 		h.broadcastEvent(code, map[string]any{"type": "game_started"})
+		h.Games.Start(code, playerIDs(snap.Players))
 	}
+}
+
+func playerIDs(players []lobby.Player) []uuid.UUID {
+	ids := make([]uuid.UUID, len(players))
+	for i, p := range players {
+		ids[i] = p.PlayerID
+	}
+	return ids
 }
 
 func (h *Handler) broadcastLobbyState(snap lobby.Snapshot) {
