@@ -48,6 +48,7 @@ func generateCode() string {
 	return string(b)
 }
 
+// getLobbyCode returns an unused code. Caller MUST hold l.mu (write lock).
 func (l *Lobbies) getLobbyCode() string {
 	for {
 		code := generateCode()
@@ -55,6 +56,21 @@ func (l *Lobbies) getLobbyCode() string {
 			return code
 		}
 	}
+}
+
+func (l *Lobbies) HasPlayer(code string, playerID uuid.UUID) bool {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+	lobby, ok := l.Lobbies[code]
+	if !ok {
+		return false
+	}
+	for _, p := range lobby.Players {
+		if p.PlayerID == playerID {
+			return true
+		}
+	}
+	return false
 }
 
 func (l *Lobbies) NewLobby(player Player) string {

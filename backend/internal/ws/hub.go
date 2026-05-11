@@ -1,17 +1,5 @@
 package ws
 
-import (
-	"github.com/google/uuid"
-	"github.com/gorilla/websocket"
-)
-
-type Client struct {
-	conn      *websocket.Conn
-	send      chan []byte
-	lobbyCode string
-	playerID  uuid.UUID
-}
-
 type Hub struct {
 	clients map[string]map[*Client]bool // lobbyCode -> set of clients
 
@@ -21,8 +9,8 @@ type Hub struct {
 }
 
 type Message struct {
-	lobbyCode string
-	data      []byte
+	LobbyCode string
+	Data      []byte
 }
 
 func NewHub() *Hub {
@@ -32,6 +20,12 @@ func NewHub() *Hub {
 		unregister: make(chan *Client),
 		broadcast:  make(chan Message),
 	}
+}
+
+func (h *Hub) Register(c *Client)   { h.register <- c }
+func (h *Hub) Unregister(c *Client) { h.unregister <- c }
+func (h *Hub) Broadcast(lobbyCode string, data []byte) {
+	h.broadcast <- Message{LobbyCode: lobbyCode, Data: data}
 }
 
 func (h *Hub) Run() {
@@ -44,13 +38,31 @@ func (h *Hub) Run() {
 			h.clients[client.lobbyCode][client] = true
 
 		case client := <-h.unregister:
-			delete(h.clients[client.lobbyCode], client)
-			close(client.send)
+			h.removeClient(client)
 
 		case msg := <-h.broadcast:
-			for client := range h.clients[msg.lobbyCode] {
-				client.send <- msg.data
+			for client := range h.clients[msg.LobbyCode] {
+				select {
+				case client.send <- msg.Data:
+				default:
+					h.removeClient(client)
+				}
 			}
 		}
+	}
+}
+
+func (h *Hub) removeClient(c *Client) {
+	set, ok := h.clients[c.lobbyCode]
+	if !ok {
+		return
+	}
+	if _, exists := set[c]; !exists {
+		return
+	}
+	delete(set, c)
+	close(c.send)
+	if len(set) == 0 {
+		delete(h.clients, c.lobbyCode)
 	}
 }

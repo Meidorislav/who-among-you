@@ -10,19 +10,24 @@ import (
 	"time"
 	"who-among-you/internal/httpapi"
 	"who-among-you/internal/lobby"
+	"who-among-you/internal/ws"
 
 	"github.com/go-chi/chi/v5"
 )
 
 func main() {
 	lobbies := lobby.InitLobbies()
-	handler := httpapi.NewHandler(lobbies)
+	hub := ws.NewHub()
+	go hub.Run()
+
+	handler := httpapi.NewHandler(lobbies, hub)
 
 	r := chi.NewRouter()
 
 	r.Get("/health", handler.Health)
 	r.Post("/api/lobby", handler.CreateLobby)
 	r.Post("/api/lobby/join", handler.JoinLobby)
+	r.Get("/ws", handler.WS)
 
 	srv := &http.Server{Addr: ":8080", Handler: r}
 

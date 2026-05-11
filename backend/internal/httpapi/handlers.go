@@ -4,14 +4,23 @@ import (
 	"encoding/json"
 	"net/http"
 	"who-among-you/internal/lobby"
+	"who-among-you/internal/ws"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 )
 
 type Handler struct {
 	Lobbies *lobby.Lobbies
+	Hub     *ws.Hub
 }
 
-func NewHandler(lobbies *lobby.Lobbies) *Handler {
-	return &Handler{Lobbies: lobbies}
+func NewHandler(lobbies *lobby.Lobbies, hub *ws.Hub) *Handler {
+	return &Handler{Lobbies: lobbies, Hub: hub}
+}
+
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool { return true }, // TODO: tighten for prod
 }
 
 func (h *Handler) Health(w http.ResponseWriter, _ *http.Request) {
@@ -54,10 +63,44 @@ func (h *Handler) JoinLobby(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobby, _ := h.Lobbies.GetLobby(req.LobbyCode)
-	writeJSON(w, http.StatusOK, map[string]any{
-		"players": lobby.Players,
+	event, _ := json.Marshal(map[string]any{
+		"type":   "player_joined",
+		"player": player,
 	})
+	h.Hub.Broadcast(req.LobbyCode, event)
+
+	l, _ := h.Lobbies.GetLobby(req.LobbyCode)
+	writeJSON(w, http.StatusOK, map[string]any{
+		"player":  player,
+		"players": l.Players,
+	})
+}
+
+func (h *Handler) WS(w http.ResponseWriter, r *http.Request) {
+	code := r.URL.Query().Get("code")
+	playerIDStr := r.URL.Query().Get("player_id")
+
+	playerID, err := uuid.Parse(playerIDStr)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "invalid player_id")
+		return
+	}
+
+	if !h.Lobbies.HasPlayer(code, playerID) {
+		writeError(w, http.StatusForbidden, "player not in lobby")
+		return
+	}
+
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		return // Upgrade already wrote an error response
+	}
+
+	client := ws.NewClient(h.Hub, conn, code, playerID)
+	h.Hub.Register(client)
+
+	go client.WritePump()
+	go client.ReadPump()
 }
 
 // ---------------------------------------------------------------------------
@@ -76,14 +119,4 @@ func writeError(w http.ResponseWriter, status int, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(map[string]string{"error": message})
-}
-
-// mustJSON serializes the value in JSON. Error panic
-func mustJSON(v any) []byte {
-	b, err := json.Marshal(v)
-	if err != nil {
-		panic("json marshal: " + err.Error())
-	}
-	b = append(b, '\n')
-	return b
 }
