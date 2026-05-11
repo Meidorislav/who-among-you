@@ -1,12 +1,15 @@
 package ws
 
-import "github.com/gorilla/websocket"
+import (
+	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
+)
 
 type Client struct {
 	conn      *websocket.Conn
 	send      chan []byte
 	lobbyCode string
-	playerID  string
+	playerID  uuid.UUID
 }
 
 type Hub struct {
