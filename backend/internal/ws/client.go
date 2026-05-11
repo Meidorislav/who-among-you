@@ -52,11 +52,13 @@ func (c *Client) ReadPump() {
 	})
 
 	for {
-		_, _, err := c.conn.ReadMessage()
+		_, data, err := c.conn.ReadMessage()
 		if err != nil {
 			return
 		}
-		// TODO: route incoming messages to game logic once it exists
+		if c.hub.handler != nil {
+			c.hub.handler.HandleMessage(c.playerID, c.lobbyCode, data)
+		}
 	}
 }
 

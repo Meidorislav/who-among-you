@@ -1,7 +1,16 @@
 package ws
 
+import "github.com/google/uuid"
+
+// MessageHandler routes inbound ws messages from clients into application logic.
+// Implementations must be safe for concurrent use — ReadPump calls it directly.
+type MessageHandler interface {
+	HandleMessage(playerID uuid.UUID, lobbyCode string, data []byte)
+}
+
 type Hub struct {
 	clients map[string]map[*Client]bool // lobbyCode -> set of clients
+	handler MessageHandler
 
 	register   chan *Client
 	unregister chan *Client
@@ -21,6 +30,10 @@ func NewHub() *Hub {
 		broadcast:  make(chan Message),
 	}
 }
+
+// SetHandler installs the message handler. Must be called before Run starts
+// receiving traffic. Not safe to call after clients are connected.
+func (h *Hub) SetHandler(handler MessageHandler) { h.handler = handler }
 
 func (h *Hub) Register(c *Client)   { h.register <- c }
 func (h *Hub) Unregister(c *Client) { h.unregister <- c }

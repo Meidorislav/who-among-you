@@ -18,9 +18,9 @@ import (
 func main() {
 	lobbies := lobby.InitLobbies()
 	hub := ws.NewHub()
-	go hub.Run()
-
 	handler := httpapi.NewHandler(lobbies, hub)
+	hub.SetHandler(handler)
+	go hub.Run()
 
 	r := chi.NewRouter()
 

@@ -58,21 +58,17 @@ func (h *Handler) JoinLobby(w http.ResponseWriter, r *http.Request) {
 
 	player := lobby.NewPlayer(req.Nickname)
 
-	if err := h.Lobbies.JoinLobby(req.LobbyCode, player); err != nil {
+	snap, err := h.Lobbies.JoinLobby(req.LobbyCode, player)
+	if err != nil {
 		writeError(w, http.StatusNotFound, err.Error())
 		return
 	}
 
-	event, _ := json.Marshal(map[string]any{
-		"type":   "player_joined",
-		"player": player,
-	})
-	h.Hub.Broadcast(req.LobbyCode, event)
+	h.broadcastLobbyState(snap)
 
-	l, _ := h.Lobbies.GetLobby(req.LobbyCode)
 	writeJSON(w, http.StatusOK, map[string]any{
-		"player":  player,
-		"players": l.Players,
+		"player": player,
+		"lobby":  snap,
 	})
 }
 
@@ -104,17 +100,67 @@ func (h *Handler) WS(w http.ResponseWriter, r *http.Request) {
 }
 
 // ---------------------------------------------------------------------------
-// Utility function
+// WS message routing
 // ---------------------------------------------------------------------------
 
-// writeJSON insert Content-Type: application/json and encodes body in JSON.
+// HandleMessage implements ws.MessageHandler. Runs in the ReadPump goroutine
+// of the originating client.
+func (h *Handler) HandleMessage(playerID uuid.UUID, lobbyCode string, data []byte) {
+	var env struct {
+		Type string `json:"type"`
+	}
+	if err := json.Unmarshal(data, &env); err != nil {
+		return
+	}
+
+	switch env.Type {
+	case "set_ready":
+		var msg struct {
+			Ready bool `json:"ready"`
+		}
+		if err := json.Unmarshal(data, &msg); err != nil {
+			return
+		}
+		h.handleSetReady(lobbyCode, playerID, msg.Ready)
+	}
+}
+
+func (h *Handler) handleSetReady(code string, playerID uuid.UUID, ready bool) {
+	snap, gameStarted, ok := h.Lobbies.SetReady(code, playerID, ready)
+	if !ok {
+		return
+	}
+	h.broadcastLobbyState(snap)
+	if gameStarted {
+		h.broadcastEvent(code, map[string]any{"type": "game_started"})
+	}
+}
+
+func (h *Handler) broadcastLobbyState(snap lobby.Snapshot) {
+	h.broadcastEvent(snap.Code, map[string]any{
+		"type":  "lobby_state",
+		"lobby": snap,
+	})
+}
+
+func (h *Handler) broadcastEvent(code string, payload map[string]any) {
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return
+	}
+	h.Hub.Broadcast(code, data)
+}
+
+// ---------------------------------------------------------------------------
+// HTTP utilities
+// ---------------------------------------------------------------------------
+
 func writeJSON(w http.ResponseWriter, status int, body any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(body)
 }
 
-// writeError write JSON-object {"error": "..."} with status code.
 func writeError(w http.ResponseWriter, status int, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
