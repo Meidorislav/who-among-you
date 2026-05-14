@@ -1,22 +1,47 @@
 package main
 
 import (
+	"context"
+	"errors"
+	"log"
 	"net/http"
+	"os/signal"
+	"syscall"
+	"time"
+	"who-among-you/internal/game"
 	"who-among-you/internal/httpapi"
 	"who-among-you/internal/lobby"
-
-	"github.com/go-chi/chi/v5"
+	"who-among-you/internal/ws"
 )
 
 func main() {
 	lobbies := lobby.InitLobbies()
-	handler := httpapi.NewHandler(lobbies)
+	hub := ws.NewHub()
+	games := game.NewManager(game.NewMockQuestions(), hub)
+	handler := httpapi.NewHandler(lobbies, hub, games)
+	hub.SetHandler(handler)
+	go hub.Run()
 
-	r := chi.NewRouter()
+	srv := &http.Server{Addr: ":8080", Handler: httpapi.NewRouter(handler)}
 
-	r.Get("/health", handler.Health)
-	r.Post("/api/lobby", handler.CreateLobby)
-	r.Post("/api/lobby/join", handler.JoinLobby)
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 
-	http.ListenAndServe(":8080", r)
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("server: %v", err)
+		}
+	}()
+	log.Println("server listening on :8080")
+
+	<-ctx.Done()
+	log.Println("shutdown signal received")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		log.Fatalf("shutdown: %v", err)
+	}
+	log.Println("server stopped")
 }
