@@ -10,10 +10,11 @@
 
 .title {
   font-family: var(--font-display);
-  font-size: clamp(48px, 12vw, 128px);
+  font-size: clamp(40px, 12vw, 128px);
   color: var(--color-accent);
   margin: 0;
   text-align: center;
+  text-wrap: balance;
   line-height: 1;
   user-select: none;
   text-shadow:
@@ -23,6 +24,11 @@
     0 0.02em 0 var(--color-frame),
     0.06em 0.06em 0 var(--color-frame);
   animation: titleSway 4s ease-in-out infinite;
+}
+
+.titleWord {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 @keyframes titleSway {
@@ -63,6 +69,7 @@
   background: var(--color-accent);
   color: var(--color-bg);
   font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
   font-size: 14px;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -103,6 +110,7 @@
 .button {
   padding: 14px 32px;
   font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
   font-size: 20px;
   letter-spacing: 1px;
   text-transform: uppercase;
