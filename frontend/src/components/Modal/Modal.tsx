@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import styles from './Modal.module.css'
 
 type ModalProps = {
@@ -8,6 +9,7 @@ type ModalProps = {
 }
 
 export const Modal = ({ title, onClose, children }: ModalProps) => {
+  const { t } = useTranslation()
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -30,7 +32,7 @@ export const Modal = ({ title, onClose, children }: ModalProps) => {
         aria-label={title}
         onClick={(e) => e.stopPropagation()}
       >
-        <button className={styles.close} onClick={onClose} aria-label="Close">
+        <button className={styles.close} onClick={onClose} aria-label={t('modal.close')}>
           <span className={styles.closeIcon}>×</span>
         </button>
         <div className={styles.body}>

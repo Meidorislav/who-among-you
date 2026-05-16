@@ -1,0 +1,51 @@
+{
+  "brand": "Who Among You?",
+  "header": {
+    "about": "About Game",
+    "language": "Language",
+    "theme": "Theme",
+    "github": "GitHub",
+    "logoAlt": "Who Among You?"
+  },
+  "home": {
+    "nicknameLabel": "Nickname",
+    "nicknamePlaceholder": "Type your name...",
+    "create": "Create",
+    "join": "Join"
+  },
+  "footer": {
+    "credits": "© 2026 · How well do you know each other?"
+  },
+  "modal": {
+    "close": "Close",
+    "titles": {
+      "about": "About Game",
+      "language": "Language",
+      "theme": "Theme",
+      "join": "Join Room"
+    }
+  },
+  "about": {
+    "p1": "<0>Who Among You?</0> is a cozy little party game to get to know each other better — or just have a great evening with old friends.",
+    "p2": "Every round a question pops up, and you pick who fits the description best. Voting for yourself? Totally allowed. After each round there's time to chat about it and share the stories behind your answers.",
+    "p3": "Whoever gets the most votes that round earns a point — but honestly, there are no winners or losers here. The whole point is to learn something new about each other.",
+    "p4": "No app, no install — just open the link and play."
+  },
+  "join": {
+    "nicknameLabel": "Nickname",
+    "nicknamePlaceholder": "Type your name...",
+    "codeLabel": "Room code",
+    "codePlaceholder": "ABCDEF",
+    "submit": "Join room"
+  },
+  "language": {
+    "prompt": "Choose your language.",
+    "active": "Active"
+  },
+  "theme": {
+    "prompt": "Pick a vibe.",
+    "active": "Active",
+    "sunset": "Sunset",
+    "midnight": "Midnight"
+  }
+}

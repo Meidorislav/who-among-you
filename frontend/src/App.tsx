@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Background } from './components/Background/Background'
 import { Header } from './components/Header/Header'
 import { Home } from './components/Home/Home'
@@ -11,14 +12,8 @@ import { Join } from './components/Modal/contents/Join'
 
 export type ModalType = 'about' | 'language' | 'theme' | 'join'
 
-const MODAL_TITLES: Record<ModalType, string> = {
-  about: 'About Game',
-  language: 'Language',
-  theme: 'Theme',
-  join: 'Join Room',
-}
-
 function App() {
+  const { t } = useTranslation()
   const [name, setName] = useState('')
   const [modal, setModal] = useState<ModalType | null>(null)
 
@@ -32,7 +27,7 @@ function App() {
       <Footer />
 
       {modal && (
-        <Modal title={MODAL_TITLES[modal]} onClose={closeModal}>
+        <Modal title={t(`modal.titles.${modal}`)} onClose={closeModal}>
           {modal === 'about' && <AboutGame />}
           {modal === 'language' && <Language />}
           {modal === 'theme' && <Theme />}

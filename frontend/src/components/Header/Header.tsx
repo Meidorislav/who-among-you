@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import styles from './Header.module.css'
 import logoSunset from '../../assets/logo_sunset.png'
 import logoMidnight from '../../assets/logo_midnight.png'
@@ -15,19 +16,20 @@ type HeaderProps = {
 
 export const Header = ({ onOpen }: HeaderProps) => {
   const { theme } = useTheme()
+  const { t } = useTranslation()
 
   return (
     <header className={styles.header}>
-      <img src={LOGOS[theme]} alt="Who Among You?" className={styles.logo} />
+      <img src={LOGOS[theme]} alt={t('header.logoAlt')} className={styles.logo} />
       <div className={styles.navigation_container}>
         <button className={styles.navigation_button} onClick={() => onOpen('about')}>
-          About Game
+          {t('header.about')}
         </button>
         <button className={styles.navigation_button} onClick={() => onOpen('language')}>
-          Language
+          {t('header.language')}
         </button>
         <button className={styles.navigation_button} onClick={() => onOpen('theme')}>
-          Theme
+          {t('header.theme')}
         </button>
         <a
           className={styles.navigation_button}
@@ -35,7 +37,7 @@ export const Header = ({ onOpen }: HeaderProps) => {
           target="_blank"
           rel="noreferrer"
         >
-          GitHub
+          {t('header.github')}
         </a>
       </div>
     </header>

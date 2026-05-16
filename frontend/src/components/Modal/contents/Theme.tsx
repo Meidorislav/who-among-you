@@ -1,21 +1,23 @@
+import { useTranslation } from 'react-i18next'
 import styles from './Content.module.css'
 import { THEMES, useTheme } from '../../../contexts/ThemeContext'
 
 export const Theme = () => {
   const { theme, setTheme } = useTheme()
+  const { t } = useTranslation()
 
   return (
     <>
-      <p className={styles.text}>Pick a vibe.</p>
+      <p className={styles.text}>{t('theme.prompt')}</p>
       <div className={styles.list}>
-        {THEMES.map((t) => (
+        {THEMES.map((th) => (
           <button
-            key={t.id}
+            key={th.id}
             className={styles.option}
-            onClick={() => setTheme(t.id)}
+            onClick={() => setTheme(th.id)}
           >
-            <span>{t.name}</span>
-            {t.id === theme && <span className={styles.badge}>Active</span>}
+            <span>{t(`theme.${th.id}`)}</span>
+            {th.id === theme && <span className={styles.badge}>{t('theme.active')}</span>}
           </button>
         ))}
       </div>
