@@ -1,11 +1,14 @@
 import styles from './Home.module.css'
-import { useState } from 'react';
 
 const TITLE = 'Who Among You?'
 
-export const Home = () => {
-  const [name, setName] = useState("");
+type HomeProps = {
+  name: string
+  onNameChange: (value: string) => void
+  onJoin: () => void
+}
 
+export const Home = ({ name, onNameChange, onJoin }: HomeProps) => {
   return (
     <main className={styles.home}>
       <h1 className={styles.title}>
@@ -27,7 +30,7 @@ export const Home = () => {
           type="text"
           placeholder="Type your name..."
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => onNameChange(e.target.value)}
         />
       </div>
 
@@ -35,7 +38,10 @@ export const Home = () => {
         <button className={`${styles.button} ${styles.buttonPrimary}`}>
           Create
         </button>
-        <button className={`${styles.button} ${styles.buttonSecondary}`}>
+        <button
+          className={`${styles.button} ${styles.buttonSecondary}`}
+          onClick={onJoin}
+        >
           Join
         </button>
       </div>

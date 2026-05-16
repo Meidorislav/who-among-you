@@ -52,6 +52,7 @@
   border: none;
   background: none;
   color: var(--color-text-muted);
+  text-decoration: none;
   transition: color 0.2s;
   cursor: pointer;
 }
