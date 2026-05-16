@@ -1,9 +1,36 @@
 :root {
-  font-family: system-ui, sans-serif;
   line-height: 1.5;
-  color-scheme: light dark;
+  color-scheme: light;
+
+  --font-body: 'Fredoka', system-ui, sans-serif;
+  --font-display: 'Lilita One', system-ui, sans-serif;
+
+  --color-bg: #ffeba0;
+  --color-text: #1a0f0a;
+  --color-text-muted: #6b563f;
+  --color-accent: #f97316;
+  --color-accent-hover: #ea580c;
+
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: normal;
 }
 
 body {
   margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
 }
