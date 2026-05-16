@@ -1,9 +1,10 @@
 import styles from './Header.module.css'
+import logo from '../../assets/logo.png'
 
 export const Header = () => {
   return (
     <header className={styles.header}>
-      <h1 className={styles.logo}>Who Among You?</h1>
+      <img src={logo} alt="Who Among You?" className={styles.logo} />
       <div className={styles.navigation_container}>
         <button className={styles.navigation_button}>About Game</button>
         <button className={styles.navigation_button}>Language</button>

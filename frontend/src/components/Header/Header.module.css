@@ -8,9 +8,27 @@
 }
 
 .logo {
-  font-size: 22px;
-  color: var(--color-accent);
-  margin: 0;
+  height: 40px;
+  width: auto;
+  display: block;
+  cursor: pointer;
+}
+
+.logo:hover {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-6deg) scale(1.05);
+  }
+  75% {
+    transform: rotate(6deg) scale(1.05);
+  }
 }
 
 .navigation_container {
@@ -39,7 +57,7 @@
   }
 
   .logo {
-    font-size: 28px;
+    height: 56px;
   }
 
   .navigation_container {
