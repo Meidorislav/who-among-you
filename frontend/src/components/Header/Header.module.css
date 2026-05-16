@@ -12,6 +12,7 @@
   width: auto;
   display: block;
   cursor: pointer;
+  user-select: none;
 }
 
 .logo:hover {
