@@ -1,8 +1,11 @@
 import styles from './Home.module.css'
+import { useState } from 'react';
 
 const TITLE = 'Who Among You?'
 
 export const Home = () => {
+  const [name, setName] = useState("");
+
   return (
     <main className={styles.home}>
       <h1 className={styles.title}>
@@ -23,6 +26,8 @@ export const Home = () => {
           className={styles.input}
           type="text"
           placeholder="Type your name..."
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
       </div>
 
