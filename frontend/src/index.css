@@ -1,19 +1,54 @@
 :root {
   line-height: 1.5;
-  color-scheme: light;
 
   --font-body: 'Fredoka', system-ui, sans-serif;
   --font-display: 'Lilita One', system-ui, sans-serif;
 
+  font-family: var(--font-body);
+}
+
+:root,
+[data-theme='sunset'] {
+  color-scheme: light;
+
   --color-bg: #ffeba0;
+  --color-surface: #ffffff;
   --color-text: #1a0f0a;
   --color-text-muted: #6b563f;
   --color-accent: #f97316;
   --color-accent-hover: #ea580c;
+  --color-frame: #1a0f0a;
 
-  font-family: var(--font-body);
+  --blob-1: #ffb84d;
+  --blob-2: #ffc266;
+  --blob-3: #ffaa33;
+  --blob-4: #ffd47e;
+  --blob-opacity: 0.6;
+}
+
+[data-theme='midnight'] {
+  color-scheme: dark;
+
+  --color-bg: #0a0f1d;
+  --color-surface: #131b2e;
+  --color-text: #e7eefc;
+  --color-text-muted: #7f8ca3;
+  --color-accent: #4f8fb8;
+  --color-accent-hover: #3f7ea8;
+  --color-frame: #050814;
+
+  --blob-1: #16314d;
+  --blob-2: #1d3b5c;
+  --blob-3: #101b2d;
+  --blob-4: #27486b;
+  --blob-opacity: 0.28;
+}
+
+body {
+  margin: 0;
   background: var(--color-bg);
   color: var(--color-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1,
@@ -21,10 +56,6 @@ h2,
 h3 {
   font-family: var(--font-display);
   font-weight: normal;
-}
-
-body {
-  margin: 0;
 }
 
 #root {

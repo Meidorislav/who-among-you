@@ -17,11 +17,11 @@
   line-height: 1;
   user-select: none;
   text-shadow:
-    -0.02em 0 0 var(--color-text),
-    0.02em 0 0 var(--color-text),
-    0 -0.02em 0 var(--color-text),
-    0 0.02em 0 var(--color-text),
-    0.06em 0.06em 0 var(--color-text);
+    -0.02em 0 0 var(--color-frame),
+    0.02em 0 0 var(--color-frame),
+    0 -0.02em 0 var(--color-frame),
+    0 0.02em 0 var(--color-frame),
+    0.06em 0.06em 0 var(--color-frame);
   animation: titleSway 4s ease-in-out infinite;
 }
 
@@ -66,7 +66,7 @@
   font-size: 14px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  border: 2px solid var(--color-text);
+  border: 2px solid var(--color-frame);
   transform: rotate(-2deg);
   user-select: none;
 }
@@ -76,10 +76,10 @@
   padding: 18px 20px;
   font-size: 18px;
   color: var(--color-text);
-  background: #fff;
-  border: 3px solid var(--color-text);
+  background: var(--color-surface);
+  border: 3px solid var(--color-frame);
   outline: none;
-  box-shadow: 6px 6px 0 var(--color-text);
+  box-shadow: 6px 6px 0 var(--color-frame);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -90,7 +90,7 @@
 .input:hover,
 .input:focus {
   transform: translate(-3px, -3px);
-  box-shadow: 9px 9px 0 var(--color-text);
+  box-shadow: 9px 9px 0 var(--color-frame);
 }
 
 .actions {
@@ -107,20 +107,20 @@
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--color-text);
-  border: 3px solid var(--color-text);
+  border: 3px solid var(--color-frame);
   cursor: pointer;
-  box-shadow: 6px 6px 0 var(--color-text);
+  box-shadow: 6px 6px 0 var(--color-frame);
   transition: transform 0.15s, box-shadow 0.15s;
 }
 
 .button:hover {
   transform: translate(-3px, -3px);
-  box-shadow: 9px 9px 0 var(--color-text);
+  box-shadow: 9px 9px 0 var(--color-frame);
 }
 
 .button:active {
   transform: translate(6px, 6px);
-  box-shadow: 0 0 0 var(--color-text);
+  box-shadow: 0 0 0 var(--color-frame);
 }
 
 .buttonPrimary {
@@ -128,5 +128,5 @@
 }
 
 .buttonSecondary {
-  background: #fff;
+  background: var(--color-surface);
 }
