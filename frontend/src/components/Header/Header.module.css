@@ -46,6 +46,7 @@
 .navigation_button {
   position: relative;
   font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
   font-size: 16px;
   letter-spacing: 0.5px;
   padding: 4px 2px;

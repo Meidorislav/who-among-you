@@ -1,8 +1,9 @@
 :root {
   line-height: 1.5;
 
-  --font-body: 'Fredoka', system-ui, sans-serif;
-  --font-display: 'Lilita One', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+  --font-display: 'Nunito', system-ui, sans-serif;
+  --font-display-weight: 900;
 
   font-family: var(--font-body);
 }
@@ -55,7 +56,7 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: normal;
+  font-weight: var(--font-display-weight);
 }
 
 #root {
