@@ -47,5 +47,9 @@
     "active": "Active",
     "sunset": "Sunset",
     "midnight": "Midnight"
+  },
+  "errors": {
+    "nicknameRequired": "Enter a nickname first.",
+    "network": "Couldn't reach the server. Try again?"
   }
 }
