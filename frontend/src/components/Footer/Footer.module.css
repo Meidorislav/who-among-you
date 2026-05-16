@@ -1,7 +1,7 @@
 .footer {
   padding: 16px 24px;
   text-align: center;
-  border-top: 2px solid var(--color-text);
+  border-top: 2px solid var(--color-frame);
 }
 
 .credits {

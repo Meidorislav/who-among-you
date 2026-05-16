@@ -10,7 +10,8 @@
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.6;
+  opacity: var(--blob-opacity);
+  transition: background-color 0.3s ease, opacity 0.3s ease;
 }
 
 .blob1 {
@@ -18,7 +19,7 @@
   height: 480px;
   top: -120px;
   left: -100px;
-  background: #ffb84d;
+  background: var(--blob-1);
   animation: float1 22s ease-in-out infinite;
 }
 
@@ -27,7 +28,7 @@
   height: 380px;
   top: 35%;
   right: -100px;
-  background: #ffc266;
+  background: var(--blob-2);
   animation: float2 26s ease-in-out infinite;
 }
 
@@ -36,7 +37,7 @@
   height: 420px;
   bottom: -140px;
   left: 25%;
-  background: #ffaa33;
+  background: var(--blob-3);
   animation: float3 20s ease-in-out infinite;
 }
 
@@ -45,7 +46,7 @@
   height: 280px;
   top: 15%;
   left: 55%;
-  background: #ffd47e;
+  background: var(--blob-4);
   animation: float4 28s ease-in-out infinite;
 }
 

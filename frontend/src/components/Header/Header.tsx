@@ -1,15 +1,24 @@
 import styles from './Header.module.css'
-import logo from '../../assets/logo.png'
+import logoSunset from '../../assets/logo_sunset.png'
+import logoMidnight from '../../assets/logo_midnight.png'
 import type { ModalType } from '../../App'
+import { useTheme } from '../../contexts/ThemeContext'
+
+const LOGOS = {
+  sunset: logoSunset,
+  midnight: logoMidnight,
+}
 
 type HeaderProps = {
   onOpen: (modal: ModalType) => void
 }
 
 export const Header = ({ onOpen }: HeaderProps) => {
+  const { theme } = useTheme()
+
   return (
     <header className={styles.header}>
-      <img src={logo} alt="Who Among You?" className={styles.logo} />
+      <img src={LOGOS[theme]} alt="Who Among You?" className={styles.logo} />
       <div className={styles.navigation_container}>
         <button className={styles.navigation_button} onClick={() => onOpen('about')}>
           About Game

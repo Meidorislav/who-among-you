@@ -24,9 +24,9 @@
   font-family: var(--font-display);
   font-size: 18px;
   color: var(--color-text);
-  background: #fff;
-  border: 3px solid var(--color-text);
-  box-shadow: 5px 5px 0 var(--color-text);
+  background: var(--color-surface);
+  border: 3px solid var(--color-frame);
+  box-shadow: 5px 5px 0 var(--color-frame);
   cursor: pointer;
   text-align: left;
   transition: transform 0.15s, box-shadow 0.15s;
@@ -35,12 +35,12 @@
 .option:hover {
   transform: translate(-2px, -2px);
   background: var(--color-accent);
-  box-shadow: 7px 7px 0 var(--color-text);
+  box-shadow: 7px 7px 0 var(--color-frame);
 }
 
 .option:active {
   transform: translate(5px, 5px);
-  box-shadow: 0 0 0 var(--color-text);
+  box-shadow: 0 0 0 var(--color-frame);
 }
 
 .badge {
@@ -71,7 +71,7 @@
   font-size: 13px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  border: 2px solid var(--color-text);
+  border: 2px solid var(--color-frame);
   transform: rotate(-2deg);
   user-select: none;
 }
@@ -81,10 +81,10 @@
   padding: 16px 18px;
   font-size: 17px;
   color: var(--color-text);
-  background: #fff;
-  border: 3px solid var(--color-text);
+  background: var(--color-surface);
+  border: 3px solid var(--color-frame);
   outline: none;
-  box-shadow: 5px 5px 0 var(--color-text);
+  box-shadow: 5px 5px 0 var(--color-frame);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -95,7 +95,7 @@
 .input:hover,
 .input:focus {
   transform: translate(-2px, -2px);
-  box-shadow: 7px 7px 0 var(--color-text);
+  box-shadow: 7px 7px 0 var(--color-frame);
 }
 
 .submit {
@@ -107,25 +107,25 @@
   text-transform: uppercase;
   color: var(--color-text);
   background: var(--color-accent);
-  border: 3px solid var(--color-text);
+  border: 3px solid var(--color-frame);
   cursor: pointer;
-  box-shadow: 6px 6px 0 var(--color-text);
+  box-shadow: 6px 6px 0 var(--color-frame);
   transition: transform 0.15s, box-shadow 0.15s;
 }
 
 .submit:hover {
   transform: translate(-3px, -3px);
-  box-shadow: 9px 9px 0 var(--color-text);
+  box-shadow: 9px 9px 0 var(--color-frame);
 }
 
 .submit:active {
   transform: translate(6px, 6px);
-  box-shadow: 0 0 0 var(--color-text);
+  box-shadow: 0 0 0 var(--color-frame);
 }
 
 .submit:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
-  box-shadow: 6px 6px 0 var(--color-text);
+  box-shadow: 6px 6px 0 var(--color-frame);
 }
