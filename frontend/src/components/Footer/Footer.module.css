@@ -1,0 +1,14 @@
+.footer {
+  padding: 16px 24px;
+  text-align: center;
+  border-top: 2px solid var(--color-text);
+}
+
+.credits {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--color-text);
+  user-select: none;
+}
