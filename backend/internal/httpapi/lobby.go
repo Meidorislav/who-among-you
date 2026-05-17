@@ -43,6 +43,7 @@ func (h *Handler) JoinLobby(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.broadcastLobbyState(snap)
+	h.maybeStartCountdown(snap.Code, snap)
 
 	writeJSON(w, http.StatusOK, map[string]any{
 		"player": player,

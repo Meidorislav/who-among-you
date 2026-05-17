@@ -2,6 +2,8 @@ package httpapi
 
 import (
 	"net/http"
+	"sync"
+	"time"
 	"who-among-you/internal/game"
 	"who-among-you/internal/lobby"
 	"who-among-you/internal/ws"
@@ -13,10 +15,18 @@ type Handler struct {
 	Lobbies *lobby.Lobbies
 	Hub     *ws.Hub
 	Games   *game.Manager
+
+	countdownsMu sync.Mutex
+	countdowns   map[string]*time.Timer
 }
 
 func NewHandler(lobbies *lobby.Lobbies, hub *ws.Hub, games *game.Manager) *Handler {
-	return &Handler{Lobbies: lobbies, Hub: hub, Games: games}
+	return &Handler{
+		Lobbies:    lobbies,
+		Hub:        hub,
+		Games:      games,
+		countdowns: make(map[string]*time.Timer),
+	}
 }
 
 var upgrader = websocket.Upgrader{

@@ -37,7 +37,11 @@ function App() {
     try {
       const { code, player } = await createLobby(nickname)
       setSession({ player, code })
-      navigate(`/lobby/${code}`)
+      navigate(`/lobby/${code}`, {
+        state: {
+          initialLobby: { code, status: 'waiting', players: [player] },
+        },
+      })
     } catch (err) {
       const msg = err instanceof ApiError ? err.message : t('errors.network')
       setError(msg)
@@ -64,7 +68,14 @@ function App() {
             </>
           }
         />
-        <Route path="/lobby/:code" element={<Lobby />} />
+        <Route path="/lobby/:code" element={
+          <>
+          <Header onOpen={setModal} />
+          <Lobby />
+          <Footer />
+          </>
+        } 
+        />
       </Routes>
 
       {modal && (

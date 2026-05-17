@@ -48,6 +48,21 @@
     "sunset": "Sunset",
     "midnight": "Midnight"
   },
+  "lobby": {
+    "codeLabel": "Room code",
+    "hint": "Share the code with friends. Game starts when everyone is ready.",
+    "you": "You",
+    "ready": "I'm ready",
+    "unready": "Wait, not yet",
+    "waiting": "Not ready",
+    "startingIn": "Starting in",
+    "cancelStart": "Cancel start",
+    "gameStarted": "Game starting...",
+    "connection": {
+      "connecting": "Connecting...",
+      "closed": "Connection lost. Try refreshing."
+    }
+  },
   "errors": {
     "nicknameRequired": "Enter a nickname first.",
     "network": "Couldn't reach the server. Try again?"

@@ -24,6 +24,8 @@ export type JoinLobbyResponse = {
 
 export type ServerEvent =
   | { type: 'lobby_state'; lobby: LobbySnapshot }
+  | { type: 'countdown_started'; deadline: number }
+  | { type: 'countdown_cancelled' }
   | { type: 'game_started' }
   | { type: 'round_started'; [key: string]: unknown }
   | { type: 'round_ended'; [key: string]: unknown }

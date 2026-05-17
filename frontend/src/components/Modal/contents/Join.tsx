@@ -30,7 +30,7 @@ export const Join = ({ name, onNameChange, onSuccess }: JoinProps) => {
       const { player, lobby } = await joinLobby(name.trim(), code.trim())
       setSession({ player, code: lobby.code })
       onSuccess()
-      navigate(`/lobby/${lobby.code}`)
+      navigate(`/lobby/${lobby.code}`, { state: { initialLobby: lobby } })
     } catch (err) {
       const msg = err instanceof ApiError ? err.message : t('errors.network')
       setError(msg)
