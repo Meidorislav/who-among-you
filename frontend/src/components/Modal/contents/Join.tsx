@@ -32,7 +32,12 @@ export const Join = ({ name, onNameChange, onSuccess }: JoinProps) => {
       onSuccess()
       navigate(`/lobby/${lobby.code}`, { state: { initialLobby: lobby } })
     } catch (err) {
-      const msg = err instanceof ApiError ? err.message : t('errors.network')
+      let msg = t('errors.network')
+      if (err instanceof ApiError) {
+        if (err.status === 404) msg = t('errors.lobbyNotFound')
+        else if (err.status === 409) msg = t('errors.gameAlreadyStarted')
+        else msg = t('errors.network')
+      }
       setError(msg)
     } finally {
       setSubmitting(false)

@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"who-among-you/internal/lobby"
 )
@@ -38,7 +39,11 @@ func (h *Handler) JoinLobby(w http.ResponseWriter, r *http.Request) {
 
 	snap, err := h.Lobbies.JoinLobby(req.LobbyCode, player)
 	if err != nil {
-		writeError(w, http.StatusNotFound, err.Error())
+		status := http.StatusNotFound
+		if errors.Is(err, lobby.ErrGameAlreadyStarted) {
+			status = http.StatusConflict
+		}
+		writeError(w, status, err.Error())
 		return
 	}
 

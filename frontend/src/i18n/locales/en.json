@@ -81,6 +81,8 @@
   },
   "errors": {
     "nicknameRequired": "Enter a nickname first.",
-    "network": "Couldn't reach the server. Try again?"
+    "network": "Couldn't reach the server. Try again?",
+    "lobbyNotFound": "Room not found. Check the code and try again.",
+    "gameAlreadyStarted": "The game has already started — you can't join now."
   }
 }

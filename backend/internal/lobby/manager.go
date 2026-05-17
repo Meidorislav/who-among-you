@@ -9,6 +9,11 @@ import (
 	"github.com/google/uuid"
 )
 
+var (
+	ErrLobbyNotFound      = errors.New("lobby not found")
+	ErrGameAlreadyStarted = errors.New("game already started")
+)
+
 type LobbyStatus string
 
 const (
@@ -130,10 +135,10 @@ func (l *Lobbies) JoinLobby(code string, player Player) (Snapshot, error) {
 
 	lobby, exists := l.Lobbies[code]
 	if !exists {
-		return Snapshot{}, errors.New("lobby not found")
+		return Snapshot{}, ErrLobbyNotFound
 	}
 	if lobby.Status != StatusWaiting {
-		return Snapshot{}, errors.New("game already started")
+		return Snapshot{}, ErrGameAlreadyStarted
 	}
 	lobby.Players = append(lobby.Players, player)
 	return snapshot(lobby), nil
