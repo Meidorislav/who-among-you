@@ -11,6 +11,17 @@ services:
       dockerfile: caddy.Dockerfile
     restart: unless-stopped
     ports:
-      - "127.0.0.1:2080:80"
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    environment:
+      - DOMAIN=${DOMAIN}
     depends_on:
       - backend
+
+volumes:
+  caddy-data:
+  caddy-config:
