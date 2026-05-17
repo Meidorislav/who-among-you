@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Navigate, useLocation, useParams } from 'react-router'
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router'
 import type { LobbySnapshot, Player } from '../../api/types'
 import { useSession, type Session } from '../../contexts/SessionContext'
 import { useLobbySocket } from '../../hooks/useLobbySocket'
+import { GameScreen } from '../Game/Game'
 import styles from './Lobby.module.css'
 
 const COUNTDOWN_TOTAL_MS = 5000
@@ -36,8 +37,29 @@ type LobbyViewProps = {
 
 const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
   const { t } = useTranslation()
-  const { lobby, connection, countdownDeadline, gameStarted, setReady } =
+  const navigate = useNavigate()
+  const { setSession } = useSession()
+  const { lobby, connection, countdownDeadline, gameStarted, setReady, vote, gameRound, myVote, finalScores } =
     useLobbySocket(code, session.player.player_id, initialLobby)
+
+  const handleLeave = () => {
+    setSession(null)
+    navigate('/')
+  }
+
+  if (gameStarted) {
+    return (
+      <GameScreen
+        players={lobby?.players ?? []}
+        selfId={session.player.player_id}
+        gameRound={gameRound}
+        myVote={myVote}
+        finalScores={finalScores}
+        vote={vote}
+        onLeave={handleLeave}
+      />
+    )
+  }
 
   const players: Player[] = lobby?.players ?? [session.player]
   const me = players.find((p) => p.player_id === session.player.player_id)
@@ -101,11 +123,6 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
             : t('lobby.ready')}
       </button>
 
-      {gameStarted && (
-        <p className={styles.status} data-tone="ok">
-          {t('lobby.gameStarted')}
-        </p>
-      )}
     </main>
   )
 }

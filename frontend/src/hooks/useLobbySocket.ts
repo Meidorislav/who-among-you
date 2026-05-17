@@ -4,11 +4,26 @@ import type { ClientMessage, LobbySnapshot, ServerEvent } from '../api/types'
 
 export type ConnectionState = 'connecting' | 'open' | 'closed'
 
+export type RoundData = {
+  round: number
+  total: number
+  question: string
+  deadlineMs: number
+  playerIds: string[]
+  phase: 'voting' | 'results'
+  votes: Record<string, number>
+  scores: Record<string, number>
+  winners: string[]
+}
+
 export type LobbySocket = {
   lobby: LobbySnapshot | null
   connection: ConnectionState
   countdownDeadline: number | null
   gameStarted: boolean
+  gameRound: RoundData | null
+  myVote: string | null
+  finalScores: Record<string, number> | null
   setReady: (ready: boolean) => void
   vote: (targetPlayerId: string) => void
 }
@@ -22,6 +37,9 @@ export const useLobbySocket = (
   const [connection, setConnection] = useState<ConnectionState>('connecting')
   const [countdownDeadline, setCountdownDeadline] = useState<number | null>(null)
   const [gameStarted, setGameStarted] = useState(false)
+  const [gameRound, setGameRound] = useState<RoundData | null>(null)
+  const [myVote, setMyVote] = useState<string | null>(null)
+  const [finalScores, setFinalScores] = useState<Record<string, number> | null>(null)
   const wsRef = useRef<WebSocket | null>(null)
 
   useEffect(() => {
@@ -70,7 +88,37 @@ export const useLobbySocket = (
           setCountdownDeadline(null)
           setGameStarted(true)
           break
-        // round_started / round_ended / game_finished: handled in next slice
+        case 'round_started':
+          setGameRound({
+            round: event.round,
+            total: event.total,
+            question: event.question,
+            deadlineMs: event.deadline * 1000,
+            playerIds: event.players,
+            phase: 'voting',
+            votes: {},
+            scores: {},
+            winners: [],
+          })
+          setMyVote(null)
+          break
+        case 'round_ended':
+          setGameRound((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  phase: 'results',
+                  votes: event.votes,
+                  scores: event.scores,
+                  winners: event.winners,
+                }
+              : null,
+          )
+          break
+        case 'game_finished':
+          setFinalScores(event.scores)
+          setGameRound(null)
+          break
       }
     }
 
@@ -97,9 +145,12 @@ export const useLobbySocket = (
     [send],
   )
   const vote = useCallback(
-    (targetPlayerId: string) => send({ type: 'vote', target_player_id: targetPlayerId }),
+    (targetPlayerId: string) => {
+      send({ type: 'vote', target_player_id: targetPlayerId })
+      setMyVote(targetPlayerId)
+    },
     [send],
   )
 
-  return { lobby, connection, countdownDeadline, gameStarted, setReady, vote }
+  return { lobby, connection, countdownDeadline, gameStarted, gameRound, myVote, finalScores, setReady, vote }
 }

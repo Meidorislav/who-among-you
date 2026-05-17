@@ -27,9 +27,22 @@ export type ServerEvent =
   | { type: 'countdown_started'; deadline: number }
   | { type: 'countdown_cancelled' }
   | { type: 'game_started' }
-  | { type: 'round_started'; [key: string]: unknown }
-  | { type: 'round_ended'; [key: string]: unknown }
-  | { type: 'game_finished'; [key: string]: unknown }
+  | {
+      type: 'round_started'
+      round: number
+      total: number
+      question: string
+      deadline: number // Unix seconds
+      players: string[] // player UUIDs
+    }
+  | {
+      type: 'round_ended'
+      round: number
+      votes: Record<string, number>
+      scores: Record<string, number>
+      winners: string[]
+    }
+  | { type: 'game_finished'; scores: Record<string, number> }
 
 export type ClientMessage =
   | { type: 'set_ready'; ready: boolean }

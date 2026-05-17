@@ -64,6 +64,16 @@
       "closed": "Connection lost. Try refreshing."
     }
   },
+  "game": {
+    "round": "Round {{round}} / {{total}}",
+    "waitingForVotes": "Waiting for others...",
+    "roundOver": "Round {{round}} over!",
+    "nextRound": "Next round coming up...",
+    "winnersThis": "This round goes to:",
+    "noVotes": "No votes this round — no points awarded",
+    "gameOver": "Game over!",
+    "goHome": "Back to home"
+  },
   "leave": {
     "body": "You'll leave the lobby and return to the home screen.",
     "confirm": "Leave",
