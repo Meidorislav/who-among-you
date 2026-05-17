@@ -1,0 +1,41 @@
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.confirm,
+.cancel {
+  flex: 1;
+  padding: 14px 24px;
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 18px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 3px solid var(--color-frame);
+  cursor: pointer;
+  box-shadow: 5px 5px 0 var(--color-frame);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.confirm {
+  color: var(--color-bg);
+  background: var(--color-frame);
+}
+
+.cancel {
+  color: var(--color-text);
+  background: var(--color-accent);
+}
+
+.confirm:hover,
+.cancel:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--color-frame);
+}
+
+.confirm:active,
+.cancel:active {
+  transform: translate(5px, 5px);
+  box-shadow: 0 0 0 var(--color-frame);
+}

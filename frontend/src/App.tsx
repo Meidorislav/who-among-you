@@ -11,10 +11,11 @@ import { AboutGame } from './components/Modal/contents/AboutGame'
 import { Language } from './components/Modal/contents/Language'
 import { Theme } from './components/Modal/contents/Theme'
 import { Join } from './components/Modal/contents/Join'
+import { Leave } from './components/Modal/contents/Leave'
 import { useSession } from './contexts/SessionContext'
 import { ApiError, createLobby } from './api/client'
 
-export type ModalType = 'about' | 'language' | 'theme' | 'join'
+export type ModalType = 'about' | 'language' | 'theme' | 'join' | 'leave'
 
 function App() {
   const { t } = useTranslation()
@@ -26,6 +27,12 @@ function App() {
   const [error, setError] = useState<string | null>(null)
 
   const closeModal = () => setModal(null)
+
+  const handleLeave = () => {
+    setSession(null)
+    navigate('/')
+    closeModal()
+  }
 
   const handleCreate = async () => {
     const nickname = name.trim()
@@ -70,11 +77,11 @@ function App() {
         />
         <Route path="/lobby/:code" element={
           <>
-          <Header onOpen={setModal} />
-          <Lobby />
-          <Footer />
+            <Header onOpen={setModal} onLogoClick={() => setModal('leave')} />
+            <Lobby />
+            <Footer />
           </>
-        } 
+        }
         />
       </Routes>
 
@@ -85,6 +92,9 @@ function App() {
           {modal === 'theme' && <Theme />}
           {modal === 'join' && (
             <Join name={name} onNameChange={setName} onSuccess={closeModal} />
+          )}
+          {modal === 'leave' && (
+            <Leave onConfirm={handleLeave} onCancel={closeModal} />
           )}
         </Modal>
       )}

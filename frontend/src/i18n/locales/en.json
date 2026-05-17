@@ -22,7 +22,8 @@
       "about": "About Game",
       "language": "Language",
       "theme": "Theme",
-      "join": "Join Room"
+      "join": "Join Room",
+      "leave": "Leave lobby?"
     }
   },
   "about": {
@@ -62,6 +63,11 @@
       "connecting": "Connecting...",
       "closed": "Connection lost. Try refreshing."
     }
+  },
+  "leave": {
+    "body": "You'll leave the lobby and return to the home screen.",
+    "confirm": "Leave",
+    "cancel": "Stay"
   },
   "errors": {
     "nicknameRequired": "Enter a nickname first.",
