@@ -20,7 +20,7 @@
 
 .confirm {
   color: var(--color-bg);
-  background: var(--color-frame);
+  background: var(--color-text);
 }
 
 .cancel {

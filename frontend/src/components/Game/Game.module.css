@@ -142,17 +142,12 @@
 
 .tag {
   padding: 2px 8px;
-  background: var(--color-frame);
+  background: var(--color-accent);
   color: var(--color-bg);
   font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   border: 2px solid var(--color-frame);
-}
-
-.voteBtn[data-chosen='true'] .tag {
-  background: var(--color-bg);
-  color: var(--color-frame);
 }
 
 .check {
