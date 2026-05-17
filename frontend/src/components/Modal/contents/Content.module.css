@@ -132,3 +132,13 @@
   transform: none;
   box-shadow: 6px 6px 0 var(--color-frame);
 }
+
+.error {
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  background: var(--color-bg);
+  border: 2px solid var(--color-accent);
+  box-shadow: 4px 4px 0 var(--color-frame);
+  color: var(--color-text);
+  font-size: 14px;
+}

@@ -9,6 +9,11 @@ import (
 	"github.com/google/uuid"
 )
 
+var (
+	ErrLobbyNotFound      = errors.New("lobby not found")
+	ErrGameAlreadyStarted = errors.New("game already started")
+)
+
 type LobbyStatus string
 
 const (
@@ -17,7 +22,8 @@ const (
 	StatusFinished LobbyStatus = "finished"
 )
 
-const minPlayersToStart = 2
+// MinPlayersToStart is the smallest lobby size that can begin a game.
+const MinPlayersToStart = 2
 
 type Player struct {
 	Nickname string    `json:"nickname"`
@@ -129,20 +135,60 @@ func (l *Lobbies) JoinLobby(code string, player Player) (Snapshot, error) {
 
 	lobby, exists := l.Lobbies[code]
 	if !exists {
-		return Snapshot{}, errors.New("lobby not found")
+		return Snapshot{}, ErrLobbyNotFound
 	}
 	if lobby.Status != StatusWaiting {
-		return Snapshot{}, errors.New("game already started")
+		return Snapshot{}, ErrGameAlreadyStarted
 	}
 	lobby.Players = append(lobby.Players, player)
 	return snapshot(lobby), nil
 }
 
-// SetReady toggles the ready flag for a player. If all players are ready and
-// minPlayersToStart is reached, the lobby transitions to playing atomically.
-// Returns the new snapshot, whether the game just started, and ok=false if
-// the lobby or player doesn't exist.
-func (l *Lobbies) SetReady(code string, playerID uuid.UUID, ready bool) (snap Snapshot, gameStarted bool, ok bool) {
+// SetReady toggles the ready flag for a player. Returns the new snapshot and
+// ok=false if the lobby or player doesn't exist. Does NOT transition the lobby
+// status — that decision now lives in the handler, which uses a delayed
+// countdown before actually starting the game.
+func (l *Lobbies) SetReady(code string, playerID uuid.UUID, ready bool) (Snapshot, bool) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	lobby, exists := l.Lobbies[code]
+	if !exists {
+		return Snapshot{}, false
+	}
+	if lobby.Status != StatusWaiting {
+		return snapshot(lobby), true
+	}
+
+	for i := range lobby.Players {
+		if lobby.Players[i].PlayerID == playerID {
+			lobby.Players[i].Ready = ready
+			return snapshot(lobby), true
+		}
+	}
+	return Snapshot{}, false
+}
+
+// StartGame transitions a waiting lobby to playing. Returns ok=false if the
+// lobby is missing or already past waiting. Called by the countdown timer after
+// the pre-start delay has elapsed.
+func (l *Lobbies) StartGame(code string) (Snapshot, bool) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	lobby, exists := l.Lobbies[code]
+	if !exists || lobby.Status != StatusWaiting {
+		return Snapshot{}, false
+	}
+	lobby.Status = StatusPlaying
+	return snapshot(lobby), true
+}
+
+// RemovePlayer drops a player from a waiting lobby. Returns the new snapshot,
+// whether anything actually changed, and whether the lobby itself was deleted
+// (because it became empty). No-op if the lobby is already playing/finished —
+// disconnect during a game keeps the player record so game state stays valid.
+func (l *Lobbies) RemovePlayer(code string, playerID uuid.UUID) (snap Snapshot, removed bool, deleted bool) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
@@ -151,34 +197,26 @@ func (l *Lobbies) SetReady(code string, playerID uuid.UUID, ready bool) (snap Sn
 		return Snapshot{}, false, false
 	}
 	if lobby.Status != StatusWaiting {
-		return snapshot(lobby), false, true
+		return snapshot(lobby), false, false
 	}
 
-	found := false
+	idx := -1
 	for i := range lobby.Players {
 		if lobby.Players[i].PlayerID == playerID {
-			lobby.Players[i].Ready = ready
-			found = true
+			idx = i
 			break
 		}
 	}
-	if !found {
-		return Snapshot{}, false, false
+	if idx < 0 {
+		return snapshot(lobby), false, false
 	}
 
-	if len(lobby.Players) >= minPlayersToStart && allReady(lobby.Players) {
-		lobby.Status = StatusPlaying
-		gameStarted = true
+	lobby.Players = append(lobby.Players[:idx], lobby.Players[idx+1:]...)
+
+	if len(lobby.Players) == 0 {
+		delete(l.Lobbies, code)
+		return Snapshot{Code: code, Status: lobby.Status, Players: nil}, true, true
 	}
 
-	return snapshot(lobby), gameStarted, true
-}
-
-func allReady(players []Player) bool {
-	for _, p := range players {
-		if !p.Ready {
-			return false
-		}
-	}
-	return true
+	return snapshot(lobby), true, false
 }

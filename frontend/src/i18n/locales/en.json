@@ -22,7 +22,8 @@
       "about": "About Game",
       "language": "Language",
       "theme": "Theme",
-      "join": "Join Room"
+      "join": "Join Room",
+      "leave": "Leave lobby?"
     }
   },
   "about": {
@@ -47,5 +48,41 @@
     "active": "Active",
     "sunset": "Sunset",
     "midnight": "Midnight"
+  },
+  "lobby": {
+    "codeLabel": "Room code",
+    "hint": "Share the code with friends. Game starts when everyone is ready.",
+    "you": "You",
+    "ready": "I'm ready",
+    "unready": "Wait, not yet",
+    "waiting": "Not ready",
+    "startingIn": "Starting in",
+    "cancelStart": "Cancel start",
+    "gameStarted": "Game starting...",
+    "connection": {
+      "connecting": "Connecting...",
+      "closed": "Connection lost. Try refreshing."
+    }
+  },
+  "game": {
+    "round": "Round {{round}} / {{total}}",
+    "waitingForVotes": "Waiting for others...",
+    "roundOver": "Round {{round}} over!",
+    "nextRound": "Next round coming up...",
+    "winnersThis": "This round goes to:",
+    "noVotes": "No votes this round — no points awarded",
+    "gameOver": "Game over!",
+    "goHome": "Back to home"
+  },
+  "leave": {
+    "body": "You'll leave the lobby and return to the home screen.",
+    "confirm": "Leave",
+    "cancel": "Stay"
+  },
+  "errors": {
+    "nicknameRequired": "Enter a nickname first.",
+    "network": "Couldn't reach the server. Try again?",
+    "lobbyNotFound": "Room not found. Check the code and try again.",
+    "gameAlreadyStarted": "The game has already started — you can't join now."
   }
 }

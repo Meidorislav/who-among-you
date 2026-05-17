@@ -1,0 +1,274 @@
+.game {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 24px 48px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.loading {
+  font-family: var(--font-display);
+  font-size: 32px;
+  color: var(--color-text-muted);
+  letter-spacing: 8px;
+}
+
+.badge {
+  padding: 6px 20px;
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 2px solid var(--color-frame);
+  box-shadow: 4px 4px 0 var(--color-frame);
+}
+
+.questionBox {
+  width: 100%;
+  padding: 20px 24px;
+  background: var(--color-surface);
+  border: 3px solid var(--color-frame);
+  box-shadow: 6px 6px 0 var(--color-frame);
+}
+
+.question {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: clamp(20px, 5vw, 28px);
+  line-height: 1.3;
+  color: var(--color-text);
+  text-align: center;
+}
+
+/* Timer bar */
+
+.timerWrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timerTrack {
+  flex: 1;
+  height: 10px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-frame);
+  overflow: hidden;
+}
+
+.timerFill {
+  height: 100%;
+  width: 100%;
+  background: var(--color-accent);
+  transform-origin: left;
+  transition-property: transform;
+  transition-timing-function: linear;
+}
+
+.timerSeconds {
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 14px;
+  color: var(--color-text-muted);
+  min-width: 32px;
+  text-align: right;
+}
+
+/* Voting player list */
+
+.playerList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.voteBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 18px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 3px solid var(--color-frame);
+  box-shadow: 5px 5px 0 var(--color-frame);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+
+.voteBtn:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--color-frame);
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.voteBtn:active:not(:disabled) {
+  transform: translate(5px, 5px);
+  box-shadow: 0 0 0 var(--color-frame);
+}
+
+.voteBtn:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.voteBtn[data-chosen='true'] {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  opacity: 1;
+}
+
+.voteName {
+  flex: 1;
+}
+
+.tag {
+  padding: 2px 8px;
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 2px solid var(--color-frame);
+}
+
+.check {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.hint {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* Results */
+
+.winners {
+  margin: 0;
+  font-size: 16px;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.resultList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.resultRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  background: var(--color-surface);
+  border: 3px solid var(--color-frame);
+  box-shadow: 4px 4px 0 var(--color-frame);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.resultRow[data-winner='true'] {
+  background: var(--color-accent);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--color-frame);
+}
+
+.rank {
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 14px;
+  color: var(--color-text-muted);
+  min-width: 28px;
+}
+
+.resultRow[data-winner='true'] .rank {
+  color: var(--color-bg);
+}
+
+.resultName {
+  flex: 1;
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.resultRow[data-winner='true'] .resultName {
+  color: var(--color-bg);
+}
+
+.resultVotes {
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 16px;
+  color: var(--color-text-muted);
+  min-width: 32px;
+  text-align: right;
+}
+
+.resultRow[data-winner='true'] .resultVotes {
+  color: var(--color-bg);
+}
+
+.resultScore {
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 22px;
+  color: var(--color-text);
+  min-width: 36px;
+  text-align: right;
+}
+
+.resultRow[data-winner='true'] .resultScore {
+  color: var(--color-bg);
+}
+
+/* Leave button */
+
+.leaveBtn {
+  padding: 14px 36px;
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 3px solid var(--color-frame);
+  cursor: pointer;
+  box-shadow: 6px 6px 0 var(--color-frame);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.leaveBtn:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 var(--color-frame);
+}
+
+.leaveBtn:active {
+  transform: translate(6px, 6px);
+  box-shadow: 0 0 0 var(--color-frame);
+}

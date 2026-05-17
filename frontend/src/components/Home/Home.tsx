@@ -5,10 +5,12 @@ import styles from './Home.module.css'
 type HomeProps = {
   name: string
   onNameChange: (value: string) => void
+  onCreate: () => void
   onJoin: () => void
+  error: string | null
 }
 
-export const Home = ({ name, onNameChange, onJoin }: HomeProps) => {
+export const Home = ({ name, onNameChange, onCreate, onJoin, error }: HomeProps) => {
   const { t } = useTranslation()
   const title = t('brand')
   const words = title.split(' ')
@@ -50,7 +52,10 @@ export const Home = ({ name, onNameChange, onJoin }: HomeProps) => {
       </div>
 
       <div className={styles.actions}>
-        <button className={`${styles.button} ${styles.buttonPrimary}`}>
+        <button
+          className={`${styles.button} ${styles.buttonPrimary}`}
+          onClick={onCreate}
+        >
           {t('home.create')}
         </button>
         <button
@@ -60,6 +65,8 @@ export const Home = ({ name, onNameChange, onJoin }: HomeProps) => {
           {t('home.join')}
         </button>
       </div>
+
+      {error && <p className={styles.error}>{error}</p>}
     </main>
   )
 }

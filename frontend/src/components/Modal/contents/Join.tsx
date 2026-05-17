@@ -1,16 +1,48 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ApiError, joinLobby } from '../../../api/client'
+import { useSession } from '../../../contexts/SessionContext'
+import { useNavigate } from 'react-router'
 import styles from './Content.module.css'
 
 type JoinProps = {
   name: string
   onNameChange: (value: string) => void
+  onSuccess: () => void
 }
 
-export const Join = ({ name, onNameChange }: JoinProps) => {
+export const Join = ({ name, onNameChange, onSuccess }: JoinProps) => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const { setSession } = useSession()
+
   const [code, setCode] = useState('')
-  const canJoin = name.trim().length > 0 && code.trim().length > 0
+  const [error, setError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+
+  const canJoin = name.trim().length > 0 && code.trim().length > 0 && !submitting
+
+  const handleJoin = async () => {
+    if (!canJoin) return
+    setError(null)
+    setSubmitting(true)
+    try {
+      const { player, lobby } = await joinLobby(name.trim(), code.trim())
+      setSession({ player, code: lobby.code })
+      onSuccess()
+      navigate(`/lobby/${lobby.code}`, { state: { initialLobby: lobby } })
+    } catch (err) {
+      let msg = t('errors.network')
+      if (err instanceof ApiError) {
+        if (err.status === 404) msg = t('errors.lobbyNotFound')
+        else if (err.status === 409) msg = t('errors.gameAlreadyStarted')
+        else msg = t('errors.network')
+      }
+      setError(msg)
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <>
@@ -36,7 +68,13 @@ export const Join = ({ name, onNameChange }: JoinProps) => {
         />
       </div>
 
-      <button className={styles.submit} disabled={!canJoin}>
+      {error && <p className={styles.error}>{error}</p>}
+
+      <button
+        className={styles.submit}
+        disabled={!canJoin}
+        onClick={handleJoin}
+      >
         {t('join.submit')}
       </button>
     </>

@@ -12,15 +12,21 @@ const LOGOS = {
 
 type HeaderProps = {
   onOpen: (modal: ModalType) => void
+  onLogoClick?: () => void
 }
 
-export const Header = ({ onOpen }: HeaderProps) => {
+export const Header = ({ onOpen, onLogoClick }: HeaderProps) => {
   const { theme } = useTheme()
   const { t } = useTranslation()
 
   return (
     <header className={styles.header}>
-      <img src={LOGOS[theme]} alt={t('header.logoAlt')} className={styles.logo} />
+      <img
+        src={LOGOS[theme]}
+        alt={t('header.logoAlt')}
+        className={styles.logo}
+        onClick={onLogoClick}
+      />
       <div className={styles.navigation_container}>
         <button className={styles.navigation_button} onClick={() => onOpen('about')}>
           {t('header.about')}

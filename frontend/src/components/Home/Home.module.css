@@ -138,3 +138,14 @@
 .buttonSecondary {
   background: var(--color-surface);
 }
+
+.error {
+  margin: 0;
+  padding: 10px 16px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-accent);
+  box-shadow: 4px 4px 0 var(--color-frame);
+  color: var(--color-text);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
