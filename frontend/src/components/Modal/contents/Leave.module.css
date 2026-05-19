@@ -24,7 +24,7 @@
 }
 
 .cancel {
-  color: var(--color-text);
+  color: var(--color-on-accent);
   background: var(--color-accent);
 }
 

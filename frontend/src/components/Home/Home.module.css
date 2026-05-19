@@ -59,7 +59,6 @@
   position: relative;
   width: min(100%, 360px);
 }
-
 .inputLabel {
   position: absolute;
   top: -14px;
@@ -67,7 +66,7 @@
   z-index: 1;
   padding: 4px 12px;
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
   font-family: var(--font-display);
   font-weight: var(--font-display-weight);
   font-size: 14px;
@@ -77,9 +76,11 @@
   transform: rotate(-2deg);
   user-select: none;
 }
-
-.input {
-  width: 100%;
+...
+.buttonPrimary {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
   padding: 18px 20px;
   font-size: 18px;
   color: var(--color-text);

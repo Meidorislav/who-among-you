@@ -20,6 +20,9 @@
   --color-accent-hover: #ea580c;
   --color-frame: #1a0f0a;
 
+  --color-on-accent: var(--color-bg);
+  --color-on-frame: var(--color-bg);
+
   --blob-1: #ffb84d;
   --blob-2: #ffc266;
   --blob-3: #ffaa33;
@@ -37,6 +40,9 @@
   --color-accent: #4f8fb8;
   --color-accent-hover: #3f7ea8;
   --color-frame: #050814;
+
+  --color-on-accent: var(--color-bg);
+  --color-on-frame: var(--color-text);
 
   --blob-1: #16314d;
   --blob-2: #1d3b5c;

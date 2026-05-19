@@ -36,6 +36,7 @@
 .option:hover {
   transform: translate(-2px, -2px);
   background: var(--color-accent);
+  color: var(--color-on-accent);
   box-shadow: 7px 7px 0 var(--color-frame);
 }
 
@@ -67,7 +68,7 @@
   z-index: 1;
   padding: 4px 12px;
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
   font-family: var(--font-display);
   font-weight: var(--font-display-weight);
   font-size: 13px;
@@ -108,7 +109,7 @@
   font-size: 20px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--color-text);
+  color: var(--color-on-accent);
   background: var(--color-accent);
   border: 3px solid var(--color-frame);
   cursor: pointer;
