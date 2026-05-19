@@ -20,7 +20,7 @@
 .badge {
   padding: 6px 20px;
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
   font-family: var(--font-display);
   font-weight: var(--font-display-weight);
   font-size: 13px;
@@ -117,7 +117,7 @@
   transform: translate(-2px, -2px);
   box-shadow: 7px 7px 0 var(--color-frame);
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
 }
 
 .voteBtn:active:not(:disabled) {
@@ -132,7 +132,7 @@
 
 .voteBtn[data-chosen='true'] {
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
   opacity: 1;
 }
 
@@ -143,7 +143,7 @@
 .tag {
   padding: 2px 8px;
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
   font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -194,6 +194,7 @@
 
 .resultRow[data-winner='true'] {
   background: var(--color-accent);
+  color: var(--color-on-accent);
   transform: translate(-2px, -2px);
   box-shadow: 6px 6px 0 var(--color-frame);
 }
@@ -207,7 +208,7 @@
 }
 
 .resultRow[data-winner='true'] .rank {
-  color: var(--color-bg);
+  color: inherit;
 }
 
 .resultName {
@@ -217,7 +218,7 @@
 }
 
 .resultRow[data-winner='true'] .resultName {
-  color: var(--color-bg);
+  color: inherit;
 }
 
 .resultVotes {
@@ -230,7 +231,7 @@
 }
 
 .resultRow[data-winner='true'] .resultVotes {
-  color: var(--color-bg);
+  color: inherit;
 }
 
 .resultScore {
@@ -243,7 +244,7 @@
 }
 
 .resultRow[data-winner='true'] .resultScore {
-  color: var(--color-bg);
+  color: inherit;
 }
 
 /* Leave button */

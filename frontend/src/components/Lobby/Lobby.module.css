@@ -22,7 +22,7 @@
   left: 20px;
   padding: 4px 12px;
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
   font-family: var(--font-display);
   font-weight: var(--font-display-weight);
   font-size: 12px;
@@ -68,7 +68,7 @@
 
 .status[data-tone='ok'] {
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
 }
 
 .players {
@@ -108,7 +108,7 @@
 .youTag {
   padding: 2px 8px;
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
   font-family: var(--font-display);
   font-weight: var(--font-display-weight);
   font-size: 11px;
@@ -156,7 +156,7 @@
 
 .readyBtn[data-ready='true'] {
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
 }
 
 .readyBtn:disabled {
@@ -166,7 +166,7 @@
 
 .readyBtn[data-countdown='true'] {
   background: var(--color-frame);
-  color: var(--color-bg);
+  color: var(--color-on-frame);
   animation: countdownPulse 1s ease-in-out infinite;
 }
 
