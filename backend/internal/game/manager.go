@@ -80,7 +80,7 @@ type Game struct {
 	players      []uuid.UUID
 	currentRound int
 	phase        Phase
-	question     string
+	question     Question
 	deadline     time.Time
 	votes        map[uuid.UUID]uuid.UUID // voter -> target
 	scores       map[uuid.UUID]int
@@ -129,12 +129,13 @@ func (g *Game) startNextRound() {
 	})
 
 	g.broadcastLocked(map[string]any{
-		"type":     "round_started",
-		"round":    g.currentRound,
-		"total":    TotalRounds,
-		"question": g.question,
-		"deadline": g.deadline.Unix(),
-		"players":  g.players,
+		"type":        "round_started",
+		"round":       g.currentRound,
+		"total":       TotalRounds,
+		"question_en": g.question.TextEn,
+		"question_ru": g.question.TextRu,
+		"deadline":    g.deadline.Unix(),
+		"players":     g.players,
 	})
 	g.mu.Unlock()
 }

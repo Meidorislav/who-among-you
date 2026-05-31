@@ -7,7 +7,8 @@ export type ConnectionState = 'connecting' | 'open' | 'closed'
 export type RoundData = {
   round: number
   total: number
-  question: string
+  questionEn: string
+  questionRu: string
   deadlineMs: number
   playerIds: string[]
   phase: 'voting' | 'results'
@@ -92,7 +93,8 @@ export const useLobbySocket = (
           setGameRound({
             round: event.round,
             total: event.total,
-            question: event.question,
+            questionEn: event.question_en,
+            questionRu: event.question_ru,
             deadlineMs: event.deadline * 1000,
             playerIds: event.players,
             phase: 'voting',
