@@ -31,7 +31,8 @@ export type ServerEvent =
       type: 'round_started'
       round: number
       total: number
-      question: string
+      question_en: string
+      question_ru: string
       deadline: number // Unix seconds
       players: string[] // player UUIDs
     }

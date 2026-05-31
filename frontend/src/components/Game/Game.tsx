@@ -4,6 +4,11 @@ import type { Player } from '../../api/types'
 import type { RoundData } from '../../hooks/useLobbySocket'
 import styles from './Game.module.css'
 
+const useQuestion = (round: RoundData) => {
+  const { i18n } = useTranslation()
+  return i18n.language.startsWith('ru') ? round.questionRu : round.questionEn
+}
+
 const ROUND_TOTAL_MS = 45_000
 
 type GameScreenProps = {
@@ -69,6 +74,7 @@ type VotingPhaseProps = {
 
 const VotingPhase = ({ round, selfId, myVote, vote, nickname }: VotingPhaseProps) => {
   const { t } = useTranslation()
+  const question = useQuestion(round)
   const hasVoted = myVote !== null
 
   return (
@@ -78,7 +84,7 @@ const VotingPhase = ({ round, selfId, myVote, vote, nickname }: VotingPhaseProps
       </div>
 
       <div className={styles.questionBox}>
-        <p className={styles.question}>{round.question}</p>
+        <p className={styles.question}>{question}</p>
       </div>
 
       <TimerBar key={round.deadlineMs} deadlineMs={round.deadlineMs} totalMs={ROUND_TOTAL_MS} />
@@ -121,6 +127,7 @@ type ResultsPhaseProps = {
 
 const ResultsPhase = ({ round, players, nickname }: ResultsPhaseProps) => {
   const { t } = useTranslation()
+  const question = useQuestion(round)
 
   const sorted = [...players].sort(
     (a, b) => (round.votes[b.player_id] ?? 0) - (round.votes[a.player_id] ?? 0),
@@ -133,7 +140,7 @@ const ResultsPhase = ({ round, players, nickname }: ResultsPhaseProps) => {
       </div>
 
       <div className={styles.questionBox}>
-        <p className={styles.question}>{round.question}</p>
+        <p className={styles.question}>{question}</p>
       </div>
 
       {round.winners.length > 0 ? (

@@ -1,9 +1,30 @@
 services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: whoyou
+      POSTGRES_USER: whoyou
+      POSTGRES_PASSWORD: whoyou
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U whoyou -d whoyou"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://whoyou:whoyou@postgres:5432/whoyou
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   caddy:
     build:
@@ -25,3 +46,4 @@ services:
 volumes:
   caddy-data:
   caddy-config:
+  postgres-data:
