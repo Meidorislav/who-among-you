@@ -96,6 +96,9 @@ func (h *Handler) HandleMessage(playerID uuid.UUID, lobbyCode string, data []byt
 
 	switch env.Type {
 	case "set_ready":
+		if !h.Lobbies.HasPlayer(lobbyCode, playerID) {
+			return
+		}
 		var msg struct {
 			Ready bool `json:"ready"`
 		}
@@ -104,7 +107,38 @@ func (h *Handler) HandleMessage(playerID uuid.UUID, lobbyCode string, data []byt
 		}
 		h.handleSetReady(lobbyCode, playerID, msg.Ready)
 
+	case "update_settings":
+		if !h.Lobbies.HasPlayer(lobbyCode, playerID) {
+			return
+		}
+		var msg struct {
+			QuestionCount        int `json:"question_count"`
+			RoundDurationSeconds int `json:"round_duration_seconds"`
+		}
+		if err := json.Unmarshal(data, &msg); err != nil {
+			return
+		}
+		h.handleUpdateSettings(lobbyCode, playerID, lobby.Settings{
+			QuestionCount:        msg.QuestionCount,
+			RoundDurationSeconds: msg.RoundDurationSeconds,
+		})
+
+	case "kick_player":
+		if !h.Lobbies.HasPlayer(lobbyCode, playerID) {
+			return
+		}
+		var msg struct {
+			TargetPlayerID uuid.UUID `json:"target_player_id"`
+		}
+		if err := json.Unmarshal(data, &msg); err != nil {
+			return
+		}
+		h.handleKickPlayer(lobbyCode, playerID, msg.TargetPlayerID)
+
 	case "vote":
+		if !h.Lobbies.HasPlayer(lobbyCode, playerID) {
+			return
+		}
 		var msg struct {
 			TargetPlayerID uuid.UUID `json:"target_player_id"`
 		}
@@ -112,6 +146,12 @@ func (h *Handler) HandleMessage(playerID uuid.UUID, lobbyCode string, data []byt
 			return
 		}
 		h.Games.Vote(lobbyCode, playerID, msg.TargetPlayerID)
+
+	case "next_round":
+		if !h.Lobbies.HasPlayer(lobbyCode, playerID) {
+			return
+		}
+		h.Games.ReadyForNextRound(lobbyCode, playerID)
 	}
 }
 
@@ -122,6 +162,25 @@ func (h *Handler) handleSetReady(code string, playerID uuid.UUID, ready bool) {
 	}
 	h.broadcastLobbyState(snap)
 	h.maybeStartCountdown(code, snap)
+}
+
+func (h *Handler) handleUpdateSettings(code string, hostID uuid.UUID, settings lobby.Settings) {
+	snap, err := h.Lobbies.UpdateSettings(code, hostID, settings)
+	if err != nil {
+		return
+	}
+	h.broadcastLobbyState(snap)
+	h.maybeStartCountdown(code, snap)
+}
+
+func (h *Handler) handleKickPlayer(code string, hostID, targetID uuid.UUID) {
+	snap, removed, err := h.Lobbies.KickPlayer(code, hostID, targetID)
+	if err != nil || !removed {
+		return
+	}
+	h.broadcastLobbyState(snap)
+	h.maybeStartCountdown(code, snap)
+	log.Printf("ws: host %s kicked player %s from lobby %s", hostID, targetID, code)
 }
 
 // maybeStartCountdown is the single decision point that turns "lobby state
@@ -206,7 +265,7 @@ func (h *Handler) fireCountdown(code string) {
 	}
 	h.broadcastLobbyState(snap)
 	h.broadcastEvent(code, map[string]any{"type": "game_started"})
-	h.Games.Start(code, playerIDs(snap.Players))
+	h.Games.Start(code, playerIDs(snap.Players), snap.Settings)
 	log.Printf("ws: game started for lobby %s", code)
 }
 

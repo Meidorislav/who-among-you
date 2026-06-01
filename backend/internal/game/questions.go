@@ -12,10 +12,11 @@ type Question struct {
 	TextRu string
 }
 
-// QuestionSource produces the next question for a round.
+// QuestionSource produces questions for a game.
 // Implementations must be safe for concurrent use.
 type QuestionSource interface {
-	Next() Question
+	Len() int
+	Draw(count int) []Question
 }
 
 type MockQuestions struct {
@@ -42,8 +43,34 @@ func NewMockQuestions() *MockQuestions {
 	}
 }
 
-func (m *MockQuestions) Next() Question {
+func (m *MockQuestions) Len() int {
+	return len(m.pool)
+}
+
+func (m *MockQuestions) Draw(count int) []Question {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	return m.pool[m.rng.Intn(len(m.pool))]
+
+	return drawQuestions(m.pool, count, m.rng)
+}
+
+func drawQuestions(pool []Question, count int, rng *rand.Rand) []Question {
+	if count <= 0 || len(pool) == 0 {
+		return nil
+	}
+
+	result := make([]Question, 0, count)
+	for len(result) < count {
+		shuffled := append([]Question(nil), pool...)
+		rng.Shuffle(len(shuffled), func(i, j int) {
+			shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+		})
+
+		remaining := count - len(result)
+		if remaining > len(shuffled) {
+			remaining = len(shuffled)
+		}
+		result = append(result, shuffled[:remaining]...)
+	}
+	return result
 }

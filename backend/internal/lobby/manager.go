@@ -12,6 +12,8 @@ import (
 var (
 	ErrLobbyNotFound      = errors.New("lobby not found")
 	ErrGameAlreadyStarted = errors.New("game already started")
+	ErrForbidden          = errors.New("forbidden")
+	ErrInvalidSettings    = errors.New("invalid settings")
 )
 
 type LobbyStatus string
@@ -25,16 +27,33 @@ const (
 // MinPlayersToStart is the smallest lobby size that can begin a game.
 const MinPlayersToStart = 2
 
+const (
+	DefaultQuestionCount        = 10
+	DefaultRoundDurationSeconds = 45
+	AllQuestions                = 0
+	NoRoundTimeLimit            = 0
+	MaxQuestionCount            = 500
+	MinRoundDurationSeconds     = 10
+	MaxRoundDurationSeconds     = 300
+)
+
 type Player struct {
 	Nickname string    `json:"nickname"`
 	PlayerID uuid.UUID `json:"player_id"`
 	Ready    bool      `json:"ready"`
 }
 
+type Settings struct {
+	QuestionCount        int `json:"question_count"`
+	RoundDurationSeconds int `json:"round_duration_seconds"`
+}
+
 type Lobby struct {
-	Code    string      `json:"code"`
-	Status  LobbyStatus `json:"status"`
-	Players []Player    `json:"players"`
+	Code     string      `json:"code"`
+	Status   LobbyStatus `json:"status"`
+	HostID   uuid.UUID   `json:"host_id"`
+	Settings Settings    `json:"settings"`
+	Players  []Player    `json:"players"`
 }
 
 type Lobbies struct {
@@ -44,9 +63,11 @@ type Lobbies struct {
 
 // Snapshot is an immutable view of a lobby, safe to read after the lock is released.
 type Snapshot struct {
-	Code    string      `json:"code"`
-	Status  LobbyStatus `json:"status"`
-	Players []Player    `json:"players"`
+	Code     string      `json:"code"`
+	Status   LobbyStatus `json:"status"`
+	HostID   uuid.UUID   `json:"host_id"`
+	Settings Settings    `json:"settings"`
+	Players  []Player    `json:"players"`
 }
 
 func NewPlayer(nickname string) Player {
@@ -87,7 +108,13 @@ func (l *Lobbies) getLobbyCode() string {
 func snapshot(lobby *Lobby) Snapshot {
 	players := make([]Player, len(lobby.Players))
 	copy(players, lobby.Players)
-	return Snapshot{Code: lobby.Code, Status: lobby.Status, Players: players}
+	return Snapshot{
+		Code:     lobby.Code,
+		Status:   lobby.Status,
+		HostID:   lobby.HostID,
+		Settings: lobby.Settings,
+		Players:  players,
+	}
 }
 
 func (l *Lobbies) HasPlayer(code string, playerID uuid.UUID) bool {
@@ -111,8 +138,13 @@ func (l *Lobbies) NewLobby(player Player) string {
 
 	code := l.getLobbyCode()
 	lobby := &Lobby{
-		Code:    code,
-		Status:  StatusWaiting,
+		Code:   code,
+		Status: StatusWaiting,
+		HostID: player.PlayerID,
+		Settings: Settings{
+			QuestionCount:        DefaultQuestionCount,
+			RoundDurationSeconds: DefaultRoundDurationSeconds,
+		},
 		Players: []Player{player},
 	}
 	l.Lobbies[code] = lobby
@@ -169,6 +201,36 @@ func (l *Lobbies) SetReady(code string, playerID uuid.UUID, ready bool) (Snapsho
 	return Snapshot{}, false
 }
 
+func (l *Lobbies) UpdateSettings(code string, hostID uuid.UUID, settings Settings) (Snapshot, error) {
+	if settings.QuestionCount < AllQuestions || settings.RoundDurationSeconds < NoRoundTimeLimit {
+		return Snapshot{}, ErrInvalidSettings
+	}
+	if settings.QuestionCount > MaxQuestionCount {
+		return Snapshot{}, ErrInvalidSettings
+	}
+	if settings.RoundDurationSeconds > NoRoundTimeLimit &&
+		(settings.RoundDurationSeconds < MinRoundDurationSeconds || settings.RoundDurationSeconds > MaxRoundDurationSeconds) {
+		return Snapshot{}, ErrInvalidSettings
+	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	lobby, exists := l.Lobbies[code]
+	if !exists {
+		return Snapshot{}, ErrLobbyNotFound
+	}
+	if lobby.Status != StatusWaiting {
+		return snapshot(lobby), ErrGameAlreadyStarted
+	}
+	if lobby.HostID != hostID {
+		return snapshot(lobby), ErrForbidden
+	}
+
+	lobby.Settings = settings
+	return snapshot(lobby), nil
+}
+
 // StartGame transitions a waiting lobby to playing. Returns ok=false if the
 // lobby is missing or already past waiting. Called by the countdown timer after
 // the pre-start delay has elapsed.
@@ -217,6 +279,43 @@ func (l *Lobbies) RemovePlayer(code string, playerID uuid.UUID) (snap Snapshot, 
 		delete(l.Lobbies, code)
 		return Snapshot{Code: code, Status: lobby.Status, Players: nil}, true, true
 	}
+	if lobby.HostID == playerID {
+		lobby.HostID = lobby.Players[0].PlayerID
+	}
 
 	return snapshot(lobby), true, false
+}
+
+func (l *Lobbies) KickPlayer(code string, hostID, targetID uuid.UUID) (Snapshot, bool, error) {
+	if hostID == targetID {
+		return Snapshot{}, false, ErrForbidden
+	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	lobby, exists := l.Lobbies[code]
+	if !exists {
+		return Snapshot{}, false, ErrLobbyNotFound
+	}
+	if lobby.Status != StatusWaiting {
+		return snapshot(lobby), false, ErrGameAlreadyStarted
+	}
+	if lobby.HostID != hostID {
+		return snapshot(lobby), false, ErrForbidden
+	}
+
+	idx := -1
+	for i := range lobby.Players {
+		if lobby.Players[i].PlayerID == targetID {
+			idx = i
+			break
+		}
+	}
+	if idx < 0 {
+		return snapshot(lobby), false, nil
+	}
+
+	lobby.Players = append(lobby.Players[:idx], lobby.Players[idx+1:]...)
+	return snapshot(lobby), true, nil
 }

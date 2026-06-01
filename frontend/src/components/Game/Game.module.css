@@ -247,9 +247,10 @@
   color: inherit;
 }
 
-/* Leave button */
+/* Action buttons */
 
-.leaveBtn {
+.leaveBtn,
+.nextBtn {
   padding: 14px 36px;
   font-family: var(--font-display);
   font-weight: var(--font-display-weight);
@@ -264,12 +265,24 @@
   transition: transform 0.15s, box-shadow 0.15s;
 }
 
-.leaveBtn:hover {
+.leaveBtn:hover,
+.nextBtn:hover:not(:disabled) {
   transform: translate(-3px, -3px);
   box-shadow: 9px 9px 0 var(--color-frame);
 }
 
-.leaveBtn:active {
+.leaveBtn:active,
+.nextBtn:active:not(:disabled) {
   transform: translate(6px, 6px);
   box-shadow: 0 0 0 var(--color-frame);
+}
+
+.nextBtn {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.nextBtn:disabled {
+  cursor: default;
+  opacity: 0.65;
 }

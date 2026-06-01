@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router'
 import type { LobbySnapshot, Player } from '../../api/types'
@@ -8,6 +8,8 @@ import { GameScreen } from '../Game/Game'
 import styles from './Lobby.module.css'
 
 const COUNTDOWN_TOTAL_MS = 5000
+const QUESTION_OPTIONS = [5, 10, 15, 20]
+const ROUND_TIME_OPTIONS = [15, 30, 45, 60, 90]
 // viewBox is 100x100, centered at (50, 50). r=46 with stroke-width=8 puts the
 // stroke's outer edge exactly at r=50 — flush against the SVG boundary, which
 // (since the SVG fills the container's content box with inset:0) lands exactly
@@ -39,13 +41,33 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { setSession } = useSession()
-  const { lobby, connection, countdownDeadline, gameStarted, setReady, vote, gameRound, myVote, finalScores } =
-    useLobbySocket(code, session.player.player_id, initialLobby)
+  const {
+    lobby,
+    connection,
+    countdownDeadline,
+    gameStarted,
+    setReady,
+    updateSettings,
+    kickPlayer,
+    vote,
+    nextRound,
+    gameRound,
+    myVote,
+    finalScores,
+  } = useLobbySocket(code, session.player.player_id, initialLobby)
 
-  const handleLeave = () => {
+  const handleLeave = useCallback(() => {
     setSession(null)
     navigate('/')
-  }
+  }, [navigate, setSession])
+
+  useEffect(() => {
+    if (!lobby) return
+    const stillInLobby = lobby.players.some((p) => p.player_id === session.player.player_id)
+    if (!stillInLobby) {
+      handleLeave()
+    }
+  }, [handleLeave, lobby, session.player.player_id])
 
   if (gameStarted) {
     return (
@@ -56,6 +78,7 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
         myVote={myVote}
         finalScores={finalScores}
         vote={vote}
+        nextRound={nextRound}
         onLeave={handleLeave}
       />
     )
@@ -64,8 +87,13 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
   const players: Player[] = lobby?.players ?? [session.player]
   const me = players.find((p) => p.player_id === session.player.player_id)
   const isReady = me?.ready ?? false
+  const isHost = lobby?.host_id === session.player.player_id
   const canToggle = connection === 'open' && !gameStarted
   const inCountdown = countdownDeadline !== null
+  const settings = lobby?.settings ?? {
+    question_count: 10,
+    round_duration_seconds: 45,
+  }
 
   return (
     <main className={styles.lobby}>
@@ -86,6 +114,47 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
         <CountdownRing key={countdownDeadline} deadline={countdownDeadline} />
       )}
 
+      {isHost && (
+        <section className={styles.hostPanel} aria-label={t('lobby.hostPanel')}>
+          <div className={styles.hostTitle}>{t('lobby.hostPanel')}</div>
+          <label className={styles.setting}>
+            <span>{t('lobby.questionCount')}</span>
+            <select
+              value={settings.question_count}
+              disabled={connection !== 'open'}
+              onChange={(event) =>
+                updateSettings(Number(event.target.value), settings.round_duration_seconds)
+              }
+            >
+              {QUESTION_OPTIONS.map((count) => (
+                <option key={count} value={count}>
+                  {count}
+                </option>
+              ))}
+              <option value={0}>{t('lobby.allQuestions')}</option>
+            </select>
+          </label>
+
+          <label className={styles.setting}>
+            <span>{t('lobby.roundTime')}</span>
+            <select
+              value={settings.round_duration_seconds}
+              disabled={connection !== 'open'}
+              onChange={(event) =>
+                updateSettings(settings.question_count, Number(event.target.value))
+              }
+            >
+              {ROUND_TIME_OPTIONS.map((seconds) => (
+                <option key={seconds} value={seconds}>
+                  {t('lobby.seconds', { count: seconds })}
+                </option>
+              ))}
+              <option value={0}>{t('lobby.noTimeLimit')}</option>
+            </select>
+          </label>
+        </section>
+      )}
+
       <ul className={styles.players}>
         {players.map((p) => {
           const isSelf = p.player_id === session.player.player_id
@@ -99,11 +168,26 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
               <span className={styles.nickname}>
                 {p.nickname}
                 {isSelf && <span className={styles.youTag}>{t('lobby.you')}</span>}
+                {p.player_id === lobby?.host_id && (
+                  <span className={styles.hostTag}>{t('lobby.host')}</span>
+                )}
               </span>
-              <span
-                className={styles.dot}
-                aria-label={p.ready ? t('lobby.ready') : t('lobby.waiting')}
-              />
+              <span className={styles.playerActions}>
+                {isHost && !isSelf && (
+                  <button
+                    className={styles.kickBtn}
+                    type="button"
+                    disabled={connection !== 'open'}
+                    onClick={() => kickPlayer(p.player_id)}
+                  >
+                    {t('lobby.kick')}
+                  </button>
+                )}
+                <span
+                  className={styles.dot}
+                  aria-label={p.ready ? t('lobby.ready') : t('lobby.waiting')}
+                />
+              </span>
             </li>
           )
         })}

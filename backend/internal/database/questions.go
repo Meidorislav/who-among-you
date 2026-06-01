@@ -49,8 +49,26 @@ func (p *PostgresQuestions) Len() int {
 	return len(p.pool)
 }
 
-func (p *PostgresQuestions) Next() game.Question {
+func (p *PostgresQuestions) Draw(count int) []game.Question {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	return p.pool[p.rng.Intn(len(p.pool))]
+
+	if count <= 0 || len(p.pool) == 0 {
+		return nil
+	}
+
+	result := make([]game.Question, 0, count)
+	for len(result) < count {
+		shuffled := append([]game.Question(nil), p.pool...)
+		p.rng.Shuffle(len(shuffled), func(i, j int) {
+			shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+		})
+
+		remaining := count - len(result)
+		if remaining > len(shuffled) {
+			remaining = len(shuffled)
+		}
+		result = append(result, shuffled[:remaining]...)
+	}
+	return result
 }

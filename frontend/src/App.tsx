@@ -42,11 +42,11 @@ function App() {
     }
     setError(null)
     try {
-      const { code, player } = await createLobby(nickname)
+      const { code, player, lobby } = await createLobby(nickname)
       setSession({ player, code })
       navigate(`/lobby/${code}`, {
         state: {
-          initialLobby: { code, status: 'waiting', players: [player] },
+          initialLobby: lobby,
         },
       })
     } catch (err) {
