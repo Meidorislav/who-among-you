@@ -16,6 +16,7 @@ export type RoundData = {
   votes: Record<string, number>
   scores: Record<string, number>
   winners: string[]
+  nextReady: string[]
 }
 
 export type LobbySocket = {
@@ -30,6 +31,7 @@ export type LobbySocket = {
   updateSettings: (questionCount: number, roundDurationSeconds: number) => void
   kickPlayer: (targetPlayerId: string) => void
   vote: (targetPlayerId: string) => void
+  nextRound: () => void
 }
 
 export const useLobbySocket = (
@@ -108,6 +110,7 @@ export const useLobbySocket = (
             votes: {},
             scores: {},
             winners: [],
+            nextReady: [],
           })
           setMyVote(null)
           break
@@ -120,8 +123,16 @@ export const useLobbySocket = (
                   votes: event.votes,
                   scores: event.scores,
                   winners: event.winners,
+                  nextReady: event.next_ready,
                 }
               : null,
+          )
+          break
+        case 'next_round_state':
+          setGameRound((prev) =>
+            prev && prev.round === event.round
+              ? { ...prev, nextReady: event.next_ready }
+              : prev,
           )
           break
         case 'game_finished':
@@ -173,6 +184,7 @@ export const useLobbySocket = (
     },
     [send],
   )
+  const nextRound = useCallback(() => send({ type: 'next_round' }), [send])
 
   return {
     lobby,
@@ -186,5 +198,6 @@ export const useLobbySocket = (
     updateSettings,
     kickPlayer,
     vote,
+    nextRound,
   }
 }

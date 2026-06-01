@@ -9,10 +9,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const (
-	ResultsDuration = 5 * time.Second
-)
-
 type Phase string
 
 const (
@@ -90,6 +86,16 @@ func (m *Manager) Vote(lobbyCode string, voter, target uuid.UUID) {
 	g.handleVote(voter, target)
 }
 
+func (m *Manager) ReadyForNextRound(lobbyCode string, player uuid.UUID) {
+	m.mu.Lock()
+	g, ok := m.games[lobbyCode]
+	m.mu.Unlock()
+	if !ok {
+		return
+	}
+	g.readyForNextRound(player)
+}
+
 // ---------------------------------------------------------------------------
 // Game (per-lobby state)
 // ---------------------------------------------------------------------------
@@ -106,6 +112,7 @@ type Game struct {
 	question     Question
 	deadline     time.Time
 	votes        map[uuid.UUID]uuid.UUID // voter -> target
+	nextReady    map[uuid.UUID]bool
 	scores       map[uuid.UUID]int
 	timer        *time.Timer
 
@@ -144,6 +151,7 @@ func (g *Game) startNextRound() {
 	g.phase = PhaseVoting
 	g.question = g.questions[g.currentRound-1]
 	g.votes = make(map[uuid.UUID]uuid.UUID, len(g.players))
+	g.nextReady = nil
 	if g.options.RoundDuration > 0 {
 		g.deadline = time.Now().Add(g.options.RoundDuration)
 	} else {
@@ -233,28 +241,49 @@ func (g *Game) endRoundLocked() {
 	}
 
 	g.phase = PhaseResults
+	g.nextReady = make(map[uuid.UUID]bool, len(g.players))
 	g.broadcastLocked(map[string]any{
-		"type":    "round_ended",
-		"round":   g.currentRound,
-		"votes":   counts,
-		"scores":  g.scores,
-		"winners": winners,
-	})
-
-	roundN := g.currentRound
-	g.timer = time.AfterFunc(ResultsDuration, func() {
-		g.advanceFromResults(roundN)
+		"type":       "round_ended",
+		"round":      g.currentRound,
+		"votes":      counts,
+		"scores":     g.scores,
+		"winners":    winners,
+		"next_ready": readyIDs(g.nextReady),
 	})
 }
 
-func (g *Game) advanceFromResults(round int) {
+func (g *Game) readyForNextRound(player uuid.UUID) {
+	startNext := false
+
 	g.mu.Lock()
-	if g.currentRound != round || g.phase != PhaseResults {
+	if g.phase != PhaseResults || !g.hasPlayer(player) {
 		g.mu.Unlock()
 		return
 	}
+
+	g.nextReady[player] = true
+	if len(g.nextReady) == len(g.players) {
+		startNext = true
+	} else {
+		g.broadcastLocked(map[string]any{
+			"type":       "next_round_state",
+			"round":      g.currentRound,
+			"next_ready": readyIDs(g.nextReady),
+		})
+	}
 	g.mu.Unlock()
-	g.startNextRound()
+
+	if startNext {
+		g.startNextRound()
+	}
+}
+
+func readyIDs(ready map[uuid.UUID]bool) []uuid.UUID {
+	ids := make([]uuid.UUID, 0, len(ready))
+	for id := range ready {
+		ids = append(ids, id)
+	}
+	return ids
 }
 
 func (g *Game) hasPlayer(id uuid.UUID) bool {

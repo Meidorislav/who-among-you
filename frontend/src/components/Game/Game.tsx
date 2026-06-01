@@ -16,6 +16,7 @@ type GameScreenProps = {
   myVote: string | null
   finalScores: Record<string, number> | null
   vote: (targetPlayerId: string) => void
+  nextRound: () => void
   onLeave: () => void
 }
 
@@ -26,6 +27,7 @@ export const GameScreen = ({
   myVote,
   finalScores,
   vote,
+  nextRound,
   onLeave,
 }: GameScreenProps) => {
   const nickname = (id: string) =>
@@ -44,7 +46,15 @@ export const GameScreen = ({
   }
 
   if (gameRound.phase === 'results') {
-    return <ResultsPhase round={gameRound} players={players} nickname={nickname} />
+    return (
+      <ResultsPhase
+        round={gameRound}
+        players={players}
+        selfId={selfId}
+        nickname={nickname}
+        nextRound={nextRound}
+      />
+    )
   }
 
   return (
@@ -128,12 +138,16 @@ const VotingPhase = ({ round, selfId, myVote, vote, nickname }: VotingPhaseProps
 type ResultsPhaseProps = {
   round: RoundData
   players: Player[]
+  selfId: string
   nickname: (id: string) => string
+  nextRound: () => void
 }
 
-const ResultsPhase = ({ round, players, nickname }: ResultsPhaseProps) => {
+const ResultsPhase = ({ round, players, selfId, nickname, nextRound }: ResultsPhaseProps) => {
   const { t } = useTranslation()
   const question = useQuestion(round)
+  const readyCount = round.nextReady.length
+  const hasConfirmed = round.nextReady.includes(selfId)
 
   const sorted = [...players].sort(
     (a, b) => (round.votes[b.player_id] ?? 0) - (round.votes[a.player_id] ?? 0),
@@ -172,7 +186,17 @@ const ResultsPhase = ({ round, players, nickname }: ResultsPhaseProps) => {
         })}
       </ul>
 
-      <p className={styles.hint}>{t('game.nextRound')}</p>
+      <button
+        className={styles.nextBtn}
+        type="button"
+        disabled={hasConfirmed}
+        onClick={nextRound}
+      >
+        {hasConfirmed ? t('game.readyForNext') : t('game.nextRound')}
+      </button>
+      <p className={styles.hint}>
+        {t('game.nextRoundReady', { ready: readyCount, total: round.playerIds.length })}
+      </p>
     </main>
   )
 }

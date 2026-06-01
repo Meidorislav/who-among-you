@@ -50,6 +50,7 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
     updateSettings,
     kickPlayer,
     vote,
+    nextRound,
     gameRound,
     myVote,
     finalScores,
@@ -77,6 +78,7 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
         myVote={myVote}
         finalScores={finalScores}
         vote={vote}
+        nextRound={nextRound}
         onLeave={handleLeave}
       />
     )

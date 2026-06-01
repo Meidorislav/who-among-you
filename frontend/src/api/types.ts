@@ -51,7 +51,9 @@ export type ServerEvent =
       votes: Record<string, number>
       scores: Record<string, number>
       winners: string[]
+      next_ready: string[]
     }
+  | { type: 'next_round_state'; round: number; next_ready: string[] }
   | { type: 'game_finished'; scores: Record<string, number> }
 
 export type ClientMessage =
@@ -59,3 +61,4 @@ export type ClientMessage =
   | { type: 'update_settings'; question_count: number; round_duration_seconds: number }
   | { type: 'kick_player'; target_player_id: string }
   | { type: 'vote'; target_player_id: string }
+  | { type: 'next_round' }

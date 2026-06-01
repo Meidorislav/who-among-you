@@ -146,6 +146,12 @@ func (h *Handler) HandleMessage(playerID uuid.UUID, lobbyCode string, data []byt
 			return
 		}
 		h.Games.Vote(lobbyCode, playerID, msg.TargetPlayerID)
+
+	case "next_round":
+		if !h.Lobbies.HasPlayer(lobbyCode, playerID) {
+			return
+		}
+		h.Games.ReadyForNextRound(lobbyCode, playerID)
 	}
 }
 
