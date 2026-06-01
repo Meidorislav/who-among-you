@@ -9,7 +9,8 @@ export type RoundData = {
   total: number
   questionEn: string
   questionRu: string
-  deadlineMs: number
+  deadlineMs: number | null
+  roundDurationMs: number | null
   playerIds: string[]
   phase: 'voting' | 'results'
   votes: Record<string, number>
@@ -26,6 +27,8 @@ export type LobbySocket = {
   myVote: string | null
   finalScores: Record<string, number> | null
   setReady: (ready: boolean) => void
+  updateSettings: (questionCount: number, roundDurationSeconds: number) => void
+  kickPlayer: (targetPlayerId: string) => void
   vote: (targetPlayerId: string) => void
 }
 
@@ -95,7 +98,11 @@ export const useLobbySocket = (
             total: event.total,
             questionEn: event.question_en,
             questionRu: event.question_ru,
-            deadlineMs: event.deadline * 1000,
+            deadlineMs: event.deadline > 0 ? event.deadline * 1000 : null,
+            roundDurationMs:
+              event.round_duration_seconds > 0
+                ? event.round_duration_seconds * 1000
+                : null,
             playerIds: event.players,
             phase: 'voting',
             votes: {},
@@ -146,6 +153,19 @@ export const useLobbySocket = (
     (ready: boolean) => send({ type: 'set_ready', ready }),
     [send],
   )
+  const updateSettings = useCallback(
+    (questionCount: number, roundDurationSeconds: number) =>
+      send({
+        type: 'update_settings',
+        question_count: questionCount,
+        round_duration_seconds: roundDurationSeconds,
+      }),
+    [send],
+  )
+  const kickPlayer = useCallback(
+    (targetPlayerId: string) => send({ type: 'kick_player', target_player_id: targetPlayerId }),
+    [send],
+  )
   const vote = useCallback(
     (targetPlayerId: string) => {
       send({ type: 'vote', target_player_id: targetPlayerId })
@@ -154,5 +174,17 @@ export const useLobbySocket = (
     [send],
   )
 
-  return { lobby, connection, countdownDeadline, gameStarted, gameRound, myVote, finalScores, setReady, vote }
+  return {
+    lobby,
+    connection,
+    countdownDeadline,
+    gameStarted,
+    gameRound,
+    myVote,
+    finalScores,
+    setReady,
+    updateSettings,
+    kickPlayer,
+    vote,
+  }
 }

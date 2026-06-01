@@ -81,6 +81,49 @@
   gap: 10px;
 }
 
+.hostPanel {
+  width: min(100%, 420px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 14px;
+  background: var(--color-surface);
+  border: 3px solid var(--color-frame);
+  box-shadow: 5px 5px 0 var(--color-frame);
+}
+
+.hostTitle {
+  grid-column: 1 / -1;
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.setting {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.setting select {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 2px solid var(--color-frame);
+  outline: none;
+}
+
+.setting select:focus {
+  box-shadow: 0 0 0 3px var(--color-accent);
+}
+
 .player {
   display: flex;
   align-items: center;
@@ -100,12 +143,14 @@
 .nickname {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
   font-size: 18px;
   color: var(--color-text);
 }
 
-.youTag {
+.youTag,
+.hostTag {
   padding: 2px 8px;
   background: var(--color-accent);
   color: var(--color-on-accent);
@@ -117,12 +162,66 @@
   border: 2px solid var(--color-frame);
 }
 
+.hostTag {
+  background: var(--color-frame);
+  color: var(--color-on-frame);
+}
+
+.playerActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 12px;
+}
+
+.kickBtn {
+  padding: 6px 10px;
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 2px solid var(--color-frame);
+  box-shadow: 3px 3px 0 var(--color-frame);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+
+.kickBtn:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--color-frame);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.kickBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .dot {
   width: 14px;
   height: 14px;
   border: 2px solid var(--color-frame);
   background: var(--color-surface);
   transition: background-color 0.2s;
+}
+
+@media (max-width: 560px) {
+  .hostPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .player {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .playerActions {
+    flex-shrink: 0;
+  }
 }
 
 .player[data-ready='true'] .dot {

@@ -18,10 +18,12 @@ func (h *Handler) CreateLobby(w http.ResponseWriter, r *http.Request) {
 
 	player := lobby.NewPlayer(req.Nickname)
 	code := h.Lobbies.NewLobby(player)
+	snap, _ := h.Lobbies.GetLobby(code)
 
 	writeJSON(w, http.StatusCreated, map[string]any{
 		"code":   code,
 		"player": player,
+		"lobby":  snap,
 	})
 }
 

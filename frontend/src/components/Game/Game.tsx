@@ -9,8 +9,6 @@ const useQuestion = (round: RoundData) => {
   return i18n.language.startsWith('ru') ? round.questionRu : round.questionEn
 }
 
-const ROUND_TOTAL_MS = 45_000
-
 type GameScreenProps = {
   players: Player[]
   selfId: string
@@ -87,7 +85,15 @@ const VotingPhase = ({ round, selfId, myVote, vote, nickname }: VotingPhaseProps
         <p className={styles.question}>{question}</p>
       </div>
 
-      <TimerBar key={round.deadlineMs} deadlineMs={round.deadlineMs} totalMs={ROUND_TOTAL_MS} />
+      {round.deadlineMs && round.roundDurationMs ? (
+        <TimerBar
+          key={round.deadlineMs}
+          deadlineMs={round.deadlineMs}
+          totalMs={round.roundDurationMs}
+        />
+      ) : (
+        <p className={styles.hint}>{t('game.noTimeLimit')}</p>
+      )}
 
       {hasVoted && <p className={styles.hint}>{t('game.waitingForVotes')}</p>}
 
