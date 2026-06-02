@@ -61,10 +61,10 @@ export const useLobbySocket = (
     ws.onopen = () => {
       setConnection('open')
     }
-    ws.onclose = (e) => {
+    ws.onclose = (_e) => {
       setConnection('closed')
     }
-    ws.onerror = (e) => {
+    ws.onerror = (_e) => {
       setConnection('closed')
     }
 
