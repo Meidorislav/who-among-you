@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 	"who-among-you/internal/lobby"
+	"who-among-you/internal/ws"
 
 	"github.com/google/uuid"
 )
@@ -94,6 +95,16 @@ func (m *Manager) ReadyForNextRound(lobbyCode string, player uuid.UUID) {
 		return
 	}
 	g.readyForNextRound(player)
+}
+
+func (m *Manager) SendCurrentRound(lobbyCode string, broadcaster Broadcaster, client interface{}) {
+	m.mu.Lock()
+	g, ok := m.games[lobbyCode]
+	m.mu.Unlock()
+	if !ok {
+		return
+	}
+	g.sendCurrentRound(broadcaster, client)
 }
 
 // ---------------------------------------------------------------------------
@@ -280,6 +291,71 @@ func (g *Game) readyForNextRound(player uuid.UUID) {
 	if startNext {
 		g.startNextRound()
 	}
+}
+
+func (g *Game) sendCurrentRound(broadcaster Broadcaster, client interface{}) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+
+	if g.phase == PhaseFinished {
+		return
+	}
+
+	deadline := int64(0)
+	if !g.deadline.IsZero() {
+		deadline = g.deadline.Unix()
+	}
+
+	event := map[string]any{
+		"type":                   "round_started",
+		"round":                  g.currentRound,
+		"total":                  g.options.TotalRounds,
+		"question_en":            g.question.TextEn,
+		"question_ru":            g.question.TextRu,
+		"deadline":               deadline,
+		"round_duration_seconds": int(g.options.RoundDuration / time.Second),
+		"players":                g.players,
+	}
+
+	if g.phase == PhaseResults {
+		event["type"] = "round_ended"
+		event["votes"] = g.votes
+		event["scores"] = g.scores
+		event["winners"] = g.getWinners()
+		event["next_ready"] = readyIDs(g.nextReady)
+	}
+
+	if data, err := json.Marshal(event); err == nil {
+		if hub, ok := broadcaster.(*ws.Hub); ok {
+			if c, ok := client.(*ws.Client); ok {
+				hub.SendTo(c, data)
+			}
+		}
+	}
+}
+
+func (g *Game) getWinners() []uuid.UUID {
+	counts := make(map[uuid.UUID]int, len(g.players))
+	for _, target := range g.votes {
+		counts[target]++
+	}
+
+	maxCount := 0
+	for _, c := range counts {
+		if c > maxCount {
+			maxCount = c
+		}
+	}
+
+	winners := make([]uuid.UUID, 0)
+	if maxCount > 0 {
+		for target, c := range counts {
+			if c == maxCount {
+				winners = append(winners, target)
+			}
+		}
+	}
+	return winners
 }
 
 func readyIDs(ready map[uuid.UUID]bool) []uuid.UUID {

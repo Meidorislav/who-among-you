@@ -57,23 +57,18 @@ export const useLobbySocket = (
     setConnection('connecting')
     setCountdownDeadline(null)
     setGameStarted(false)
-    console.debug('[ws] opening', url)
 
     ws.onopen = () => {
-      console.debug('[ws] open', code, playerId)
       setConnection('open')
     }
     ws.onclose = (e) => {
-      console.debug('[ws] close', code, playerId, e.code, e.reason)
       setConnection('closed')
     }
     ws.onerror = (e) => {
-      console.debug('[ws] error', code, playerId, e)
       setConnection('closed')
     }
 
     ws.onmessage = (e) => {
-      console.debug('[ws] message', code, playerId, e.data)
       let event: ServerEvent
       try {
         event = JSON.parse(e.data)
@@ -143,7 +138,6 @@ export const useLobbySocket = (
     }
 
     return () => {
-      console.debug('[ws] cleanup', code, playerId)
       ws.onopen = null
       ws.onclose = null
       ws.onerror = null

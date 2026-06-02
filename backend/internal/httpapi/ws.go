@@ -15,7 +15,7 @@ import (
 // mount, full page refresh, brief network hiccup) before we declare a player
 // gone and drop them from the lobby. Dev refreshes with Vite HMR cold-start
 // can take a couple of seconds, so we err on the side of patience.
-const leaveGracePeriod = 5 * time.Second
+const leaveGracePeriod = 30 * time.Second
 
 // startCountdownDuration is the pre-game window during which any player can
 // unready (or a new player can join) to abort the start. The frontend animates
@@ -55,6 +55,8 @@ func (h *Handler) WS(w http.ResponseWriter, r *http.Request) {
 			h.Hub.SendTo(client, data)
 		}
 	}
+
+	h.Games.SendCurrentRound(code, h.Hub, client)
 
 	log.Printf("ws: player %s connected to lobby %s", playerID, code)
 	client.ReadPump() // blocks until the connection drops
