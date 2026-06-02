@@ -189,7 +189,7 @@ const ResultsPhase = ({ round, players, selfId, nickname, nextRound }: ResultsPh
       <button
         className={styles.nextBtn}
         type="button"
-        disabled={hasConfirmed}
+        data-ready={hasConfirmed}
         onClick={nextRound}
       >
         {hasConfirmed ? t('game.readyForNext') : t('game.nextRound')}
