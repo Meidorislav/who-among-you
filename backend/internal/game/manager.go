@@ -261,16 +261,20 @@ func (g *Game) readyForNextRound(player uuid.UUID) {
 		return
 	}
 
-	g.nextReady[player] = true
-	if len(g.nextReady) == len(g.players) {
-		startNext = true
+	if g.nextReady[player] {
+		delete(g.nextReady, player)
 	} else {
-		g.broadcastLocked(map[string]any{
-			"type":       "next_round_state",
-			"round":      g.currentRound,
-			"next_ready": readyIDs(g.nextReady),
-		})
+		g.nextReady[player] = true
+		if len(g.nextReady) == len(g.players) {
+			startNext = true
+		}
 	}
+
+	g.broadcastLocked(map[string]any{
+		"type":       "next_round_state",
+		"round":      g.currentRound,
+		"next_ready": readyIDs(g.nextReady),
+	})
 	g.mu.Unlock()
 
 	if startNext {
