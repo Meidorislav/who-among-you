@@ -116,7 +116,7 @@ const VotingPhase = ({ round, selfId, myVote, vote, nickname }: VotingPhaseProps
               <button
                 className={styles.voteBtn}
                 data-chosen={isChosen}
-                disabled={hasVoted}
+                disabled={isChosen}
                 onClick={() => vote(id)}
               >
                 <span className={styles.voteName}>{nickname(id)}</span>
