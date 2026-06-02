@@ -103,7 +103,7 @@ export const useLobbySocket = (
           break
         case 'round_started':
           setGameRound((prev) => {
-            const isNewRound = !prev || prev.round !== event.round
+            const isNewRound = prev && prev.round !== event.round
             if (isNewRound) {
               setMyVote(null)
             }
