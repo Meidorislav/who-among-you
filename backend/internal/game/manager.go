@@ -306,6 +306,7 @@ func (g *Game) sendCurrentRound(broadcaster Broadcaster, client interface{}) {
 		deadline = g.deadline.Unix()
 	}
 
+	// Always send round_started first
 	event := map[string]any{
 		"type":                   "round_started",
 		"round":                  g.currentRound,
@@ -317,18 +318,30 @@ func (g *Game) sendCurrentRound(broadcaster Broadcaster, client interface{}) {
 		"players":                g.players,
 	}
 
-	if g.phase == PhaseResults {
-		event["type"] = "round_ended"
-		event["votes"] = g.votes
-		event["scores"] = g.scores
-		event["winners"] = g.getWinners()
-		event["next_ready"] = readyIDs(g.nextReady)
-	}
-
 	if data, err := json.Marshal(event); err == nil {
 		if hub, ok := broadcaster.(*ws.Hub); ok {
 			if c, ok := client.(*ws.Client); ok {
 				hub.SendTo(c, data)
+			}
+		}
+	}
+
+	// If in results phase, also send round_ended
+	if g.phase == PhaseResults {
+		resultEvent := map[string]any{
+			"type":       "round_ended",
+			"round":      g.currentRound,
+			"votes":      g.votes,
+			"scores":     g.scores,
+			"winners":    g.getWinners(),
+			"next_ready": readyIDs(g.nextReady),
+		}
+
+		if data, err := json.Marshal(resultEvent); err == nil {
+			if hub, ok := broadcaster.(*ws.Hub); ok {
+				if c, ok := client.(*ws.Client); ok {
+					hub.SendTo(c, data)
+				}
 			}
 		}
 	}
