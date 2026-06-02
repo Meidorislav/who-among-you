@@ -33,6 +33,7 @@
 - **Chi** for lightweight HTTP routing
 - **Gorilla WebSocket** for real-time communication
 - **UUID** for secure session and player identification
+- **PostgreSQL** for storing questions (optional; mock data used if not configured)
 
 ### Infrastructure
 - **Docker & Docker Compose** for containerization
@@ -44,6 +45,7 @@
 - [Go 1.26+](https://go.dev/dl/)
 - [Node.js](https://nodejs.org/) & [pnpm](https://pnpm.io/)
 - [Docker](https://www.docker.com/) (optional, for containerized deployment)
+- [PostgreSQL 17](https://www.postgresql.org/download/) (optional; mock questions used if not configured)
 
 ### Local Development
 
@@ -53,14 +55,20 @@
    cd who-among-you
    ```
 
-2. **Run the Backend:**
+2. **(Optional) Set up PostgreSQL:**
+   ```bash
+   export DATABASE_URL="postgresql://user:password@localhost:5432/whoyou"
+   ```
+   If `DATABASE_URL` is not set, the backend will use mock questions.
+
+3. **Run the Backend:**
    ```bash
    cd backend
    go run cmd/who-among-you/main.go
    ```
    The API will be available at `http://localhost:8080`.
 
-3. **Run the Frontend:**
+4. **Run the Frontend:**
    ```bash
    cd frontend
    pnpm install
