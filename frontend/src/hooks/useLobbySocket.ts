@@ -102,24 +102,29 @@ export const useLobbySocket = (
           setGameStarted(true)
           break
         case 'round_started':
-          setGameRound({
-            round: event.round,
-            total: event.total,
-            questionEn: event.question_en,
-            questionRu: event.question_ru,
-            deadlineMs: event.deadline > 0 ? event.deadline * 1000 : null,
-            roundDurationMs:
-              event.round_duration_seconds > 0
-                ? event.round_duration_seconds * 1000
-                : null,
-            playerIds: event.players,
-            phase: 'voting',
-            votes: {},
-            scores: {},
-            winners: [],
-            nextReady: [],
+          setGameRound((prev) => {
+            const isNewRound = !prev || prev.round !== event.round
+            if (isNewRound) {
+              setMyVote(null)
+            }
+            return {
+              round: event.round,
+              total: event.total,
+              questionEn: event.question_en,
+              questionRu: event.question_ru,
+              deadlineMs: event.deadline > 0 ? event.deadline * 1000 : null,
+              roundDurationMs:
+                event.round_duration_seconds > 0
+                  ? event.round_duration_seconds * 1000
+                  : null,
+              playerIds: event.players,
+              phase: 'voting',
+              votes: {},
+              scores: {},
+              winners: [],
+              nextReady: [],
+            }
           })
-          setMyVote(null)
           break
         case 'round_ended':
           setGameRound((prev) =>
