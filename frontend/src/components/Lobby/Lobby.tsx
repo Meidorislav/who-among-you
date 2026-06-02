@@ -24,7 +24,7 @@ export const Lobby = () => {
   const initialLobby = (location.state as { initialLobby?: LobbySnapshot } | null)
     ?.initialLobby
 
-  if (!code || !session || session.code !== code) {
+  if (!code || !session) {
     return <Navigate to="/" replace />
   }
 
@@ -69,7 +69,7 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
     }
   }, [handleLeave, lobby, session.player.player_id])
 
-  if (gameStarted) {
+  if (gameStarted || lobby?.status === 'playing') {
     return (
       <GameScreen
         players={lobby?.players ?? []}
