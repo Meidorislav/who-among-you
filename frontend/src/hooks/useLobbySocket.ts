@@ -44,9 +44,21 @@ export const useLobbySocket = (
   const [countdownDeadline, setCountdownDeadline] = useState<number | null>(null)
   const [gameStarted, setGameStarted] = useState(false)
   const [gameRound, setGameRound] = useState<RoundData | null>(null)
-  const [myVote, setMyVote] = useState<string | null>(null)
+  const [myVote, setMyVoteState] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null
+    return sessionStorage.getItem(`myVote_${code}`)
+  })
   const [finalScores, setFinalScores] = useState<Record<string, number> | null>(null)
   const wsRef = useRef<WebSocket | null>(null)
+
+  const setMyVote = useCallback((vote: string | null) => {
+    setMyVoteState(vote)
+    if (vote) {
+      sessionStorage.setItem(`myVote_${code}`, vote)
+    } else {
+      sessionStorage.removeItem(`myVote_${code}`)
+    }
+  }, [code])
 
   useEffect(() => {
     if (!code || !playerId) return
