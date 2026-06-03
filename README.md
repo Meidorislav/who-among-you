@@ -8,7 +8,7 @@
 | :---: | :---: |
 | ![Home Page](docs/images/home-page-sunset.png) | ![Room](docs/images/room-midnight.png) |
 | ![Game](docs/images/game-sunset.png) | ![Theme Picker](docs/images/theme-modal-midnight.png) |
-| ![Join Room](docs/images/join-room-modal-sunset.png) | |
+| ![Join Room](docs/images/join-room-modal-sunset.png) | ![Host Settings](docs/images/lobby-host-settings-midnight.png) |
 
 ## ✨ Features
 
