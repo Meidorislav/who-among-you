@@ -33,6 +33,13 @@ INSERT INTO questions (text_en, text_ru, category) VALUES
 ('Who among you is the fastest eater?', 'Кто из вас ест быстрее всех?', 'habits'),
 ('Who among you cleans most often?', 'Кто из вас убирается чаще всего?', 'habits'),
 ('Who among you is the biggest homebody?', 'Кто из вас самый домосед?', 'habits'),
+('Who among you is hardest to wake up in the morning?', 'Кого из вас сложнее всего разбудить с утра?', 'habits'),
+('Who among you bites their nails the most?', 'Кто из вас чаще всего грызет ногти?', 'habits'),
+('Who among you is the most superstitious?', 'Кто из вас самый суеверный?', 'habits'),
+('Who among you talks to themselves the most?', 'Кто из вас чаще всего говорит сам с собой?', 'habits'),
+('Who among you leaves the most dirty dishes?', 'Кто из вас оставляет больше всего грязной посуды?', 'habits'),
+('Who among you spends the most time on grooming?', 'Кто из вас больше всего времени тратит на уход за собой?', 'habits'),
+('Who among you is most paranoid about germs?', 'Кто из вас самый параноик по поводу микробов?', 'habits'),
 
 -- food
 ('Who among you eats the most?', 'Кто из вас больше всех ест?', 'food'),
@@ -61,6 +68,19 @@ INSERT INTO questions (text_en, text_ru, category) VALUES
 ('Who among you would survive on takeout forever?', 'Кто из вас мог бы жить на доставке вечно?', 'food'),
 ('Who among you skips breakfast most often?', 'Кто из вас чаще всего пропускает завтрак?', 'food'),
 
+-- education
+('Who among you is the best student?', 'Кто из вас лучший студент?', 'education'),
+('Who among you cheated the most on exams?', 'Кто из вас больше всех списывал на экзаменах?', 'education'),
+('Who among you would go back to school?', 'Кто из вас хотел бы вернуться в школу?', 'education'),
+
+-- alcohol
+('Who among you gets drunk the fastest?', 'Кто из вас напивается быстрее всех?', 'alcohol'),
+('Who among you drinks the most alcohol?', 'Кто из вас больше пьет алкоголь?', 'alcohol'),
+
+-- music
+('Who among you has the worst music taste?', 'Кто из вас имеет наихудший музыкальный вкус?', 'music'),
+('Who among you would be the best singer?', 'Кто из вас был бы лучшим певцом?', 'music'),
+
 -- personality
 ('Who among you is the loudest?', 'Кто из вас самый громкий?', 'personality'),
 ('Who among you is the most dramatic?', 'Кто из вас самый драматичный?', 'personality'),
@@ -70,6 +90,8 @@ INSERT INTO questions (text_en, text_ru, category) VALUES
 ('Who among you cries the most easily?', 'Кто из вас плачет легче всего?', 'personality'),
 ('Who among you laughs the loudest?', 'Кто из вас громче всех смеётся?', 'personality'),
 ('Who among you is the most optimistic?', 'Кто из вас самый оптимистичный?', 'personality'),
+('Who among you is the most stylish?', 'Кто из вас наиболее стильный?', 'personality'),
+('Who among you is the most beautiful?', 'Кто из вас наиболее красивый?', 'personality'),
 ('Who among you worries the most?', 'Кто из вас больше всех переживает?', 'personality'),
 ('Who among you is the most adventurous?', 'Кто из вас самый авантюрный?', 'personality'),
 ('Who among you is the biggest introvert?', 'Кто из вас самый большой интроверт?', 'personality'),
@@ -92,6 +114,15 @@ INSERT INTO questions (text_en, text_ru, category) VALUES
 ('Who among you is the biggest risk-taker?', 'Кто из вас самый большой любитель рисковать?', 'personality'),
 ('Who among you is the most gullible?', 'Кто из вас самый доверчивый?', 'personality'),
 ('Who among you has the worst poker face?', 'У кого из вас хуже всего покерфейс?', 'personality'),
+('Who among you has the best skincare routine?', 'У кого из вас лучший уход за кожей?', 'personality'),
+('Who among you would never leave the house without makeup?', 'Кто из вас никогда не выйдет из дома без макияжа?', 'personality'),
+('Who among you is the strongest?', 'Кто из вас самый сильный?', 'personality'),
+('Who among you is the shortest?', 'Кто из вас самый низкий?', 'personality'),
+('Who among you is the tallest?', 'Кто из вас самый высокий?', 'personality'),
+('Who among you has the best body?', 'У кого из вас лучшее тело?', 'personality'),
+('Who among you follows fashion trends the most?', 'Кто из вас больше всего следит за модными трендами?', 'personality'),
+('Who among you has the most clothing?', 'У кого из вас больше всего одежды?', 'personality'),
+('Who among you would wear anything without caring?', 'Кто из вас носил бы что угодно не заботясь о внешнем виде?', 'personality'),
 
 -- social
 ('Who among you is the most social?', 'Кто из вас самый общительный?', 'social'),
@@ -114,6 +145,13 @@ INSERT INTO questions (text_en, text_ru, category) VALUES
 ('Who among you would make the best influencer?', 'Кто из вас был бы лучшим инфлюенсером?', 'social'),
 ('Who among you is the best listener?', 'Кто из вас лучше всех слушает?', 'social'),
 ('Who among you would cause the most drama?', 'Кто из вас устроит больше всех драму?', 'social'),
+('Who among you watches TikTok the most?', 'Кто из вас больше всех смотрит тик ток?', 'social'),
+('Who among you shares TikTok videos the most?', 'Кто из вас больше всех скидывает тик токи?', 'social'),
+('Who among you lifts the mood the most?', 'Кто из вас лучше всех поднимает настроение?', 'social'),
+('Who among you is more annoying when in a bad mood?', 'Кто из вас более раздражающий когда в плохом настроении?', 'social'),
+('Who among you is the best at conflict resolution?', 'Кто из вас лучше всех разрешает конфликты?', 'social'),
+('Who among you runs away from conflict?', 'Кто из вас убегает от конфликтов?', 'social'),
+('Who among you always starts arguments?', 'Кто из вас всегда затевает ссоры?', 'social'),
 
 -- money
 ('Who among you spends the most money?', 'Кто из вас больше всех тратит деньги?', 'money'),
@@ -219,6 +257,19 @@ INSERT INTO questions (text_en, text_ru, category) VALUES
 ('Who among you always wins at rock-paper-scissors?', 'Кто из вас всегда побеждает в «камень-ножницы-бумага»?', 'skills'),
 ('Who among you is the best photographer?', 'Кто из вас лучший фотограф?', 'skills'),
 ('Who among you is best at doing impressions?', 'Кто из вас лучше всех копирует других?', 'skills'),
+('Who among you tells the best jokes?', 'Кто из вас лучше шутит?', 'skills'),
+('Who among you is the best at video games?', 'Кто из вас лучше играет в компьютерные игры?', 'skills'),
+('Who among you is the best at board games?', 'Кто из вас лучше играет в настольные игры?', 'skills'),
+
+-- driving
+('Who among you is the most aggressive driver?', 'Кто из вас самый агрессивный водитель?', 'driving'),
+('Who among you drives the slowest?', 'Кто из вас медленнее всех ездит?', 'driving'),
+('Who among you has gotten the most speeding tickets?', 'Кто из вас получил больше всего штрафов за превышение скорости?', 'driving'),
+
+-- pets
+('Who among you would be the best pet owner?', 'Кто из вас был бы лучшим хозяином домашних животных?', 'pets'),
+('Who among you is most allergic to animals?', 'Кто из вас больше всех аллергичен на животных?', 'pets'),
+('Who among you talks to their pet the most?', 'Кто из вас больше всего разговаривает со своим питомцем?', 'pets'),
 
 -- fun
 ('Who among you is most likely to become a viral meme?', 'Кто из вас, скорее всего, станет мемом?', 'fun'),
@@ -290,6 +341,24 @@ INSERT INTO questions (text_en, text_ru, category) VALUES
 ('Who among you would be the best parent?', 'Кто из вас был бы лучшим родителем?', 'relationships'),
 ('Who among you is most likely to find love online?', 'Кто из вас, скорее всего, найдёт любовь в интернете?', 'relationships'),
 ('Who among you is the hardest to read emotionally?', 'Кого из вас сложнее всего понять эмоционально?', 'relationships'),
+('Who among you is the most honest?', 'Кто из вас более честный?', 'relationships'),
+('Who among you lies the most?', 'Кто из вас больше врет?', 'relationships'),
+('Who among you is the most caring?', 'Кто из вас более заботливый?', 'relationships'),
+('Who among you is the most kind?', 'Кто из вас более добрый?', 'relationships'),
+
+-- home
+('Who among you has the nicest apartment?', 'У кого из вас самая красивая квартира?', 'home'),
+('Who among you would renovate their place first?', 'Кто из вас первым отремонтирует своё жилье?', 'home'),
+('Who among you has the best interior design?', 'У кого из вас лучший дизайн интерьера?', 'home'),
+
+-- hobbies
+('Who among you has the weirdest talent?', 'У кого из вас самый странный талант?', 'hobbies'),
+('Who among you collects the most random stuff?', 'Кто из вас собирает больше всего случайных вещей?', 'hobbies'),
+('Who among you would become a YouTuber?', 'Кто из вас стал бы ютубером?', 'hobbies'),
+
+-- weather
+('Who among you hates winter the most?', 'Кто из вас больше всех ненавидит зиму?', 'weather'),
+('Who among you loves summer the most?', 'Кто из вас больше всех любит лето?', 'weather'),
 
 -- health
 ('Who among you would last the longest in a plank challenge?', 'Кто из вас дольше всех простоит в планке?', 'health'),
