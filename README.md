@@ -1,6 +1,6 @@
 # Who Among You? 🕵️‍♂️
 
-**Who Among You?** is a cozy, real-time multiplayer party game designed to help friends get to know each other better—or just have a great evening together. No apps, no installs—just open the link, share the room code, and start playing.
+**Who Among You?** is a cozy, real-time multiplayer party game designed to help friends get to know each other better-or just have a great evening together. No apps, no installs-just open the link, share the room code, and start playing.
 
 ## 📸 Screenshots
 
