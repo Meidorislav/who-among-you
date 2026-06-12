@@ -246,10 +246,9 @@ func (l *Lobbies) StartGame(code string) (Snapshot, bool) {
 	return snapshot(lobby), true
 }
 
-// RemovePlayer drops a player from a waiting lobby. Returns the new snapshot,
+// RemovePlayer drops a player from a lobby. Returns the new snapshot,
 // whether anything actually changed, and whether the lobby itself was deleted
-// (because it became empty). No-op if the lobby is already playing/finished —
-// disconnect during a game keeps the player record so game state stays valid.
+// (because it became empty).
 func (l *Lobbies) RemovePlayer(code string, playerID uuid.UUID) (snap Snapshot, removed bool, deleted bool) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -257,9 +256,6 @@ func (l *Lobbies) RemovePlayer(code string, playerID uuid.UUID) (snap Snapshot, 
 	lobby, exists := l.Lobbies[code]
 	if !exists {
 		return Snapshot{}, false, false
-	}
-	if lobby.Status != StatusWaiting {
-		return snapshot(lobby), false, false
 	}
 
 	idx := -1
