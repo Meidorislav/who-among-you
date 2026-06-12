@@ -97,6 +97,15 @@ func (m *Manager) ReadyForNextRound(lobbyCode string, player uuid.UUID) {
 	g.readyForNextRound(player)
 }
 
+func (m *Manager) DeleteGame(lobbyCode string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if g, ok := m.games[lobbyCode]; ok {
+		g.stop()
+		delete(m.games, lobbyCode)
+	}
+}
+
 func (m *Manager) SendCurrentRound(lobbyCode string, broadcaster Broadcaster, client interface{}) {
 	m.mu.Lock()
 	g, ok := m.games[lobbyCode]
@@ -128,6 +137,14 @@ type Game struct {
 	timer        *time.Timer
 
 	broadcaster Broadcaster
+}
+
+func (g *Game) stop() {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	if g.timer != nil {
+		g.timer.Stop()
+	}
 }
 
 func newGame(code string, players []uuid.UUID, options Options, qs QuestionSource, b Broadcaster) *Game {

@@ -79,6 +79,7 @@ func (h *Handler) scheduleLeave(code string, playerID uuid.UUID) {
 	}
 	if deleted {
 		h.cancelCountdown(code)
+		h.Games.DeleteGame(code)
 		return
 	}
 	h.broadcastLobbyState(snap)
