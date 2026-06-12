@@ -402,7 +402,7 @@ INSERT INTO questions (text_en, text_ru, category) VALUES
 ('Who among you would build a secret base in Minecraft?', 'Кто из вас построит секретную базу в Майнкрафте?', 'minecraft'),
 ('Who among you spends the longest decorating their Minecraft house?', 'Кто из вас дольше всех украшает свой дом в Майнкрафте?', 'minecraft'),
 ('Who among you would lose all their items in Minecraft first?', 'Кто из вас первым потеряет весь инвентарь в Майнкрафте?', 'minecraft'),
-('Who among you would accidentally blow up the base in Minecraft?', 'Кто из вас случайно взорвёт базу в Майнкрафте?', 'minecraft')
+('Who among you would accidentally blow up the base in Minecraft?', 'Кто из вас случайно взорвёт базу в Майнкрафте?', 'minecraft'),
 ('Who among you is the best at PvP in Minecraft?', 'Кто из вас лучше всех в PvP в Майнкрафте?', 'minecraft'),
 ('Who among you is the best at mace PvP in Minecraft?', 'Кто из вас лучше всех в PvP на буловах в Майнкрафте?', 'minecraft'),
 ('Who among you is the best at crystal PvP in Minecraft?', 'Кто из вас лучше всех в PvP кристалами в Майнкрафте?', 'minecraft'),
