@@ -243,6 +243,7 @@ INSERT INTO questions (text_en, text_ru, category) VALUES
 ('Who among you has the best memory?', 'У кого из вас лучшая память?', 'skills'),
 ('Who among you is the best driver?', 'Кто из вас лучший водитель?', 'skills'),
 ('Who among you is the most athletic?', 'Кто из вас самый спортивный?', 'skills'),
+('Who among you loves sports more?', 'Кто из вас любит больше спорт?', 'skills'),
 ('Who among you would win a trivia contest?', 'Кто из вас выиграл бы в викторине?', 'skills'),
 ('Who among you is the best writer?', 'Кто из вас лучший писатель?', 'skills'),
 ('Who among you learns new languages the fastest?', 'Кто из вас быстрее всех учит языки?', 'skills'),
