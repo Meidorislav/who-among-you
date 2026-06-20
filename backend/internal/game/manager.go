@@ -33,6 +33,7 @@ type Manager struct {
 type Options struct {
 	TotalRounds   int
 	RoundDuration time.Duration
+	Categories    []string
 }
 
 func NewManager(questions QuestionSource, broadcaster Broadcaster) *Manager {
@@ -59,9 +60,11 @@ func (m *Manager) Start(lobbyCode string, players []uuid.UUID, settings lobby.Se
 }
 
 func (m *Manager) options(settings lobby.Settings) Options {
+	available := m.questions.Len(settings.Categories)
+
 	totalRounds := settings.QuestionCount
-	if totalRounds == lobby.AllQuestions {
-		totalRounds = m.questions.Len()
+	if totalRounds == lobby.AllQuestions || totalRounds > available {
+		totalRounds = available
 	}
 	if totalRounds <= 0 {
 		totalRounds = lobby.DefaultQuestionCount
@@ -72,7 +75,7 @@ func (m *Manager) options(settings lobby.Settings) Options {
 		roundDuration = time.Duration(settings.RoundDurationSeconds) * time.Second
 	}
 
-	return Options{TotalRounds: totalRounds, RoundDuration: roundDuration}
+	return Options{TotalRounds: totalRounds, RoundDuration: roundDuration, Categories: settings.Categories}
 }
 
 // Vote records a vote from voter for target in the current round.
@@ -95,6 +98,10 @@ func (m *Manager) ReadyForNextRound(lobbyCode string, player uuid.UUID) {
 		return
 	}
 	g.readyForNextRound(player)
+}
+
+func (m *Manager) Categories() []string {
+	return m.questions.Categories()
 }
 
 func (m *Manager) DeleteGame(lobbyCode string) {
@@ -152,7 +159,7 @@ func newGame(code string, players []uuid.UUID, options Options, qs QuestionSourc
 		lobbyCode:   code,
 		players:     append([]uuid.UUID(nil), players...),
 		options:     options,
-		questions:   qs.Draw(options.TotalRounds),
+		questions:   qs.Draw(options.TotalRounds, options.Categories),
 		scores:      make(map[uuid.UUID]int, len(players)),
 		broadcaster: b,
 	}

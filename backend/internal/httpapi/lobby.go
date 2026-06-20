@@ -7,6 +7,14 @@ import (
 	"who-among-you/internal/lobby"
 )
 
+func (h *Handler) GetCategories(w http.ResponseWriter, _ *http.Request) {
+	cats := h.Games.Categories()
+	if cats == nil {
+		cats = []string{}
+	}
+	writeJSON(w, http.StatusOK, map[string]any{"categories": cats})
+}
+
 func (h *Handler) CreateLobby(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		Nickname string `json:"nickname"`

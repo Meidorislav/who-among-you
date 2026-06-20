@@ -44,8 +44,9 @@ type Player struct {
 }
 
 type Settings struct {
-	QuestionCount        int `json:"question_count"`
-	RoundDurationSeconds int `json:"round_duration_seconds"`
+	QuestionCount        int      `json:"question_count"`
+	RoundDurationSeconds int      `json:"round_duration_seconds"`
+	Categories           []string `json:"categories"`
 }
 
 type Lobby struct {
@@ -144,6 +145,7 @@ func (l *Lobbies) NewLobby(player Player) string {
 		Settings: Settings{
 			QuestionCount:        DefaultQuestionCount,
 			RoundDurationSeconds: DefaultRoundDurationSeconds,
+			Categories:           []string{},
 		},
 		Players: []Player{player},
 	}

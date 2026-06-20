@@ -31,6 +31,13 @@ const postJSON = async <T>(path: string, body: unknown): Promise<T> => {
   return res.json() as Promise<T>
 }
 
+export const fetchCategories = async (): Promise<string[]> => {
+  const res = await fetch('/api/categories')
+  if (!res.ok) return []
+  const data = await res.json() as { categories: string[] }
+  return data.categories ?? []
+}
+
 export const createLobby = (nickname: string) =>
   postJSON<CreateLobbyResponse>('/api/lobby', { nickname })
 
