@@ -115,15 +115,21 @@ func (h *Handler) HandleMessage(playerID uuid.UUID, lobbyCode string, data []byt
 			return
 		}
 		var msg struct {
-			QuestionCount        int `json:"question_count"`
-			RoundDurationSeconds int `json:"round_duration_seconds"`
+			QuestionCount        int      `json:"question_count"`
+			RoundDurationSeconds int      `json:"round_duration_seconds"`
+			Categories           []string `json:"categories"`
 		}
 		if err := json.Unmarshal(data, &msg); err != nil {
 			return
 		}
+		cats := msg.Categories
+		if cats == nil {
+			cats = []string{}
+		}
 		h.handleUpdateSettings(lobbyCode, playerID, lobby.Settings{
 			QuestionCount:        msg.QuestionCount,
 			RoundDurationSeconds: msg.RoundDurationSeconds,
+			Categories:           cats,
 		})
 
 	case "kick_player":

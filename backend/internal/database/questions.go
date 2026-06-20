@@ -18,7 +18,7 @@ type PostgresQuestions struct {
 }
 
 func NewPostgresQuestions(ctx context.Context, db *pgxpool.Pool) (*PostgresQuestions, error) {
-	rows, err := db.Query(ctx, "SELECT text_en, text_ru FROM questions")
+	rows, err := db.Query(ctx, "SELECT text_en, text_ru, category FROM questions")
 	if err != nil {
 		return nil, fmt.Errorf("query questions: %w", err)
 	}
@@ -27,7 +27,7 @@ func NewPostgresQuestions(ctx context.Context, db *pgxpool.Pool) (*PostgresQuest
 	var questions []game.Question
 	for rows.Next() {
 		var q game.Question
-		if err := rows.Scan(&q.TextEn, &q.TextRu); err != nil {
+		if err := rows.Scan(&q.TextEn, &q.TextRu, &q.Category); err != nil {
 			return nil, fmt.Errorf("scan question: %w", err)
 		}
 		questions = append(questions, q)
@@ -45,21 +45,38 @@ func NewPostgresQuestions(ctx context.Context, db *pgxpool.Pool) (*PostgresQuest
 	}, nil
 }
 
-func (p *PostgresQuestions) Len() int {
-	return len(p.pool)
+func (p *PostgresQuestions) Categories() []string {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	seen := make(map[string]bool)
+	var result []string
+	for _, q := range p.pool {
+		if !seen[q.Category] {
+			seen[q.Category] = true
+			result = append(result, q.Category)
+		}
+	}
+	return result
 }
 
-func (p *PostgresQuestions) Draw(count int) []game.Question {
+func (p *PostgresQuestions) Len(categories []string) int {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return len(filterPool(p.pool, categories))
+}
+
+func (p *PostgresQuestions) Draw(count int, categories []string) []game.Question {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	if count <= 0 || len(p.pool) == 0 {
+	pool := filterPool(p.pool, categories)
+	if count <= 0 || len(pool) == 0 {
 		return nil
 	}
 
 	result := make([]game.Question, 0, count)
 	for len(result) < count {
-		shuffled := append([]game.Question(nil), p.pool...)
+		shuffled := append([]game.Question(nil), pool...)
 		p.rng.Shuffle(len(shuffled), func(i, j int) {
 			shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
 		})
@@ -71,4 +88,21 @@ func (p *PostgresQuestions) Draw(count int) []game.Question {
 		result = append(result, shuffled[:remaining]...)
 	}
 	return result
+}
+
+func filterPool(pool []game.Question, categories []string) []game.Question {
+	if len(categories) == 0 {
+		return pool
+	}
+	set := make(map[string]bool, len(categories))
+	for _, c := range categories {
+		set[c] = true
+	}
+	filtered := make([]game.Question, 0, len(pool))
+	for _, q := range pool {
+		if set[q.Category] {
+			filtered = append(filtered, q)
+		}
+	}
+	return filtered
 }

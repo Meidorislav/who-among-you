@@ -32,7 +32,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("load questions: %v", err)
 		}
-		log.Printf("loaded %d questions from database", pq.Len())
+		log.Printf("loaded %d questions from database", pq.Len(nil))
 		questions = pq
 	} else {
 		log.Println("DATABASE_URL not set, using mock questions")

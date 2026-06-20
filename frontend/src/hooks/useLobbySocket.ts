@@ -28,7 +28,7 @@ export type LobbySocket = {
   myVote: string | null
   finalScores: Record<string, number> | null
   setReady: (ready: boolean) => void
-  updateSettings: (questionCount: number, roundDurationSeconds: number) => void
+  updateSettings: (questionCount: number, roundDurationSeconds: number, categories: string[]) => void
   kickPlayer: (targetPlayerId: string) => void
   vote: (targetPlayerId: string) => void
   nextRound: () => void
@@ -176,11 +176,12 @@ export const useLobbySocket = (
     [send],
   )
   const updateSettings = useCallback(
-    (questionCount: number, roundDurationSeconds: number) =>
+    (questionCount: number, roundDurationSeconds: number, categories: string[]) =>
       send({
         type: 'update_settings',
         question_count: questionCount,
         round_duration_seconds: roundDurationSeconds,
+        categories,
       }),
     [send],
   )

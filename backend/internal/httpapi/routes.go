@@ -8,6 +8,7 @@ func NewRouter(h *Handler) *chi.Mux {
 
 	r.Get("/health", h.Health)
 
+	r.Get("/api/categories", h.GetCategories)
 	r.Post("/api/lobby", h.CreateLobby)
 	r.Post("/api/lobby/join", h.JoinLobby)
 

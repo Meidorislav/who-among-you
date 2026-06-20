@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router'
+import { fetchCategories } from '../../api/client'
 import type { LobbySnapshot, Player } from '../../api/types'
 import { useSession, type Session } from '../../contexts/SessionContext'
 import { useLobbySocket } from '../../hooks/useLobbySocket'
@@ -41,6 +42,12 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { setSession } = useSession()
+  const [availableCategories, setAvailableCategories] = useState<string[]>([])
+
+  useEffect(() => {
+    fetchCategories().then(setAvailableCategories)
+  }, [])
+
   const {
     lobby,
     connection,
@@ -93,6 +100,29 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
   const settings = lobby?.settings ?? {
     question_count: 10,
     round_duration_seconds: 45,
+    categories: [] as string[],
+  }
+  const selectedCategories = settings.categories ?? []
+  const allSelected = selectedCategories.length === 0
+
+  const isCategorySelected = (cat: string) => allSelected || selectedCategories.includes(cat)
+
+  const toggleCategory = (cat: string) => {
+    let next: string[]
+    if (allSelected) {
+      next = availableCategories.filter((c) => c !== cat)
+    } else if (selectedCategories.includes(cat)) {
+      if (selectedCategories.length === 1) return
+      next = selectedCategories.filter((c) => c !== cat)
+    } else {
+      const added = [...selectedCategories, cat]
+      next = added.length === availableCategories.length ? [] : added
+    }
+    updateSettings(settings.question_count, settings.round_duration_seconds, next)
+  }
+
+  const resetCategories = () => {
+    updateSettings(settings.question_count, settings.round_duration_seconds, [])
   }
 
   return (
@@ -123,7 +153,7 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
               value={settings.question_count}
               disabled={connection !== 'open'}
               onChange={(event) =>
-                updateSettings(Number(event.target.value), settings.round_duration_seconds)
+                updateSettings(Number(event.target.value), settings.round_duration_seconds, selectedCategories)
               }
             >
               {QUESTION_OPTIONS.map((count) => (
@@ -141,7 +171,7 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
               value={settings.round_duration_seconds}
               disabled={connection !== 'open'}
               onChange={(event) =>
-                updateSettings(settings.question_count, Number(event.target.value))
+                updateSettings(settings.question_count, Number(event.target.value), selectedCategories)
               }
             >
               {ROUND_TIME_OPTIONS.map((seconds) => (
@@ -152,6 +182,37 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
               <option value={0}>{t('lobby.noTimeLimit')}</option>
             </select>
           </label>
+
+          {availableCategories.length > 0 && (
+            <div className={styles.categoriesSection}>
+              <div className={styles.categoriesHeader}>
+                <span className={styles.categoriesLabel}>{t('lobby.categories')}</span>
+                {!allSelected && (
+                  <button
+                    type="button"
+                    className={styles.resetCategoriesBtn}
+                    disabled={connection !== 'open'}
+                    onClick={resetCategories}
+                  >
+                    {t('lobby.selectAll')}
+                  </button>
+                )}
+              </div>
+              <div className={styles.categoryGrid}>
+                {availableCategories.map((cat) => (
+                  <label key={cat} className={styles.categoryCheckbox}>
+                    <input
+                      type="checkbox"
+                      checked={isCategorySelected(cat)}
+                      disabled={connection !== 'open'}
+                      onChange={() => toggleCategory(cat)}
+                    />
+                    {t(`lobby.categoryNames.${cat}`, { defaultValue: cat })}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
       )}
 
