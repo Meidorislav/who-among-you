@@ -30,6 +30,7 @@ export type LobbySocket = {
   setReady: (ready: boolean) => void
   updateSettings: (questionCount: number, roundDurationSeconds: number, categories: string[]) => void
   kickPlayer: (targetPlayerId: string) => void
+  transferHost: (targetPlayerId: string) => void
   vote: (targetPlayerId: string) => void
   nextRound: () => void
 }
@@ -189,6 +190,10 @@ export const useLobbySocket = (
     (targetPlayerId: string) => send({ type: 'kick_player', target_player_id: targetPlayerId }),
     [send],
   )
+  const transferHost = useCallback(
+    (targetPlayerId: string) => send({ type: 'transfer_host', target_player_id: targetPlayerId }),
+    [send],
+  )
   const vote = useCallback(
     (targetPlayerId: string) => {
       send({ type: 'vote', target_player_id: targetPlayerId })
@@ -209,6 +214,7 @@ export const useLobbySocket = (
     setReady,
     updateSettings,
     kickPlayer,
+    transferHost,
     vote,
     nextRound,
   }

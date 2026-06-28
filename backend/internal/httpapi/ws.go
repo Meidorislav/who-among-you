@@ -144,6 +144,18 @@ func (h *Handler) HandleMessage(playerID uuid.UUID, lobbyCode string, data []byt
 		}
 		h.handleKickPlayer(lobbyCode, playerID, msg.TargetPlayerID)
 
+	case "transfer_host":
+		if !h.Lobbies.HasPlayer(lobbyCode, playerID) {
+			return
+		}
+		var msg struct {
+			TargetPlayerID uuid.UUID `json:"target_player_id"`
+		}
+		if err := json.Unmarshal(data, &msg); err != nil {
+			return
+		}
+		h.handleTransferHost(lobbyCode, playerID, msg.TargetPlayerID)
+
 	case "vote":
 		if !h.Lobbies.HasPlayer(lobbyCode, playerID) {
 			return
@@ -180,6 +192,15 @@ func (h *Handler) handleUpdateSettings(code string, hostID uuid.UUID, settings l
 	}
 	h.broadcastLobbyState(snap)
 	h.maybeStartCountdown(code, snap)
+}
+
+func (h *Handler) handleTransferHost(code string, hostID, targetID uuid.UUID) {
+	snap, err := h.Lobbies.TransferHost(code, hostID, targetID)
+	if err != nil {
+		return
+	}
+	h.broadcastLobbyState(snap)
+	log.Printf("ws: host %s transferred host to %s in lobby %s", hostID, targetID, code)
 }
 
 func (h *Handler) handleKickPlayer(code string, hostID, targetID uuid.UUID) {

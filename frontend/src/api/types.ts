@@ -61,5 +61,6 @@ export type ClientMessage =
   | { type: 'set_ready'; ready: boolean }
   | { type: 'update_settings'; question_count: number; round_duration_seconds: number; categories: string[] }
   | { type: 'kick_player'; target_player_id: string }
+  | { type: 'transfer_host'; target_player_id: string }
   | { type: 'vote'; target_player_id: string }
   | { type: 'next_round' }

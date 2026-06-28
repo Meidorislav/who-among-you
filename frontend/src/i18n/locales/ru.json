@@ -88,6 +88,7 @@
     "seconds": "{{count}} сек",
     "noTimeLimit": "Без лимита",
     "kick": "Кик",
+    "makeHost": "Сделать хостом",
     "ready": "Я готов",
     "unready": "Подождите, ещё не готов",
     "waiting": "Не готов",
