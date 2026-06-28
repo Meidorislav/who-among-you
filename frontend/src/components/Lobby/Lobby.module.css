@@ -259,6 +259,33 @@
   margin-left: 12px;
 }
 
+.transferBtn {
+  padding: 6px 10px;
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 2px solid var(--color-frame);
+  box-shadow: 3px 3px 0 var(--color-frame);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+
+.transferBtn:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--color-frame);
+  background: var(--color-secondary, var(--color-frame));
+  color: var(--color-text);
+}
+
+.transferBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .kickBtn {
   padding: 6px 10px;
   font-family: var(--font-display);

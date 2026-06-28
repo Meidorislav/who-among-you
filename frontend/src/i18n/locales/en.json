@@ -88,6 +88,7 @@
     "seconds": "{{count}} sec",
     "noTimeLimit": "No time limit",
     "kick": "Kick",
+    "makeHost": "Make host",
     "ready": "I'm ready",
     "unready": "Wait, not yet",
     "waiting": "Not ready",

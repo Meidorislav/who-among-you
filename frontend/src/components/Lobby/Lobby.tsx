@@ -56,6 +56,7 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
     setReady,
     updateSettings,
     kickPlayer,
+    transferHost,
     vote,
     nextRound,
     gameRound,
@@ -235,14 +236,24 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
               </span>
               <span className={styles.playerActions}>
                 {isHost && !isSelf && (
-                  <button
-                    className={styles.kickBtn}
-                    type="button"
-                    disabled={connection !== 'open'}
-                    onClick={() => kickPlayer(p.player_id)}
-                  >
-                    {t('lobby.kick')}
-                  </button>
+                  <>
+                    <button
+                      className={styles.transferBtn}
+                      type="button"
+                      disabled={connection !== 'open'}
+                      onClick={() => transferHost(p.player_id)}
+                    >
+                      {t('lobby.makeHost')}
+                    </button>
+                    <button
+                      className={styles.kickBtn}
+                      type="button"
+                      disabled={connection !== 'open'}
+                      onClick={() => kickPlayer(p.player_id)}
+                    >
+                      {t('lobby.kick')}
+                    </button>
+                  </>
                 )}
                 <span
                   className={styles.dot}

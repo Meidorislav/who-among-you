@@ -284,6 +284,43 @@ func (l *Lobbies) RemovePlayer(code string, playerID uuid.UUID) (snap Snapshot, 
 	return snapshot(lobby), true, false
 }
 
+// TransferHost hands host rights from hostID to targetID. Returns the new
+// snapshot and an error if the caller is not the host or the lobby is not in
+// waiting state.
+func (l *Lobbies) TransferHost(code string, hostID, targetID uuid.UUID) (Snapshot, error) {
+	if hostID == targetID {
+		return Snapshot{}, ErrForbidden
+	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	lobby, exists := l.Lobbies[code]
+	if !exists {
+		return Snapshot{}, ErrLobbyNotFound
+	}
+	if lobby.Status != StatusWaiting {
+		return Snapshot{}, ErrGameAlreadyStarted
+	}
+	if lobby.HostID != hostID {
+		return Snapshot{}, ErrForbidden
+	}
+
+	found := false
+	for _, p := range lobby.Players {
+		if p.PlayerID == targetID {
+			found = true
+			break
+		}
+	}
+	if !found {
+		return Snapshot{}, ErrForbidden
+	}
+
+	lobby.HostID = targetID
+	return snapshot(lobby), nil
+}
+
 func (l *Lobbies) KickPlayer(code string, hostID, targetID uuid.UUID) (Snapshot, bool, error) {
 	if hostID == targetID {
 		return Snapshot{}, false, ErrForbidden
