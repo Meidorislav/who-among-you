@@ -277,8 +277,8 @@
 .transferBtn:hover:not(:disabled) {
   transform: translate(-2px, -2px);
   box-shadow: 5px 5px 0 var(--color-frame);
-  background: var(--color-secondary, var(--color-frame));
-  color: var(--color-text);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
 }
 
 .transferBtn:disabled {
