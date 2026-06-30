@@ -82,50 +82,87 @@
 }
 
 .hostPanel {
+  position: relative;
   width: min(100%, 420px);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 18px 18px;
   background: var(--color-surface);
   border: 3px solid var(--color-frame);
-  box-shadow: 5px 5px 0 var(--color-frame);
+  box-shadow: 6px 6px 0 var(--color-frame);
 }
 
 .hostTitle {
-  grid-column: 1 / -1;
+  position: absolute;
+  top: -13px;
+  left: 18px;
+  padding: 4px 12px;
   font-family: var(--font-display);
   font-weight: var(--font-display-weight);
-  font-size: 14px;
-  letter-spacing: 1px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  border: 2px solid var(--color-frame);
+  transform: rotate(-2deg);
+  user-select: none;
 }
 
 .setting {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  color: var(--color-text-muted);
-  font-size: 13px;
+  gap: 8px;
 }
 
-.setting select {
-  width: 100%;
-  padding: 10px 12px;
-  font: inherit;
+.settingLabel {
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.segment {
+  flex: 1 1 auto;
+  min-width: 46px;
+  padding: 10px 8px;
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 13px;
+  letter-spacing: 0.5px;
   color: var(--color-text);
   background: var(--color-bg);
   border: 2px solid var(--color-frame);
-  outline: none;
+  cursor: pointer;
+  transition: transform 0.12s, background-color 0.12s, color 0.12s, box-shadow 0.12s;
 }
 
-.setting select:focus {
-  box-shadow: 0 0 0 3px var(--color-accent);
+.segment:hover:not(:disabled):not([data-active='true']) {
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0 var(--color-frame);
+}
+
+.segment[data-active='true'] {
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  box-shadow: 3px 3px 0 var(--color-frame);
+}
+
+.segment:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .categoriesSection {
-  grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -136,11 +173,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-}
-
-.categoriesLabel {
-  color: var(--color-text-muted);
-  font-size: 13px;
 }
 
 .resetCategoriesBtn {
@@ -167,46 +199,39 @@
   cursor: not-allowed;
 }
 
-.categoryGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px 8px;
+.categoryChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
-.categoryCheckbox {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
+.categoryChip {
+  padding: 7px 12px;
+  font-family: var(--font-body);
+  font-weight: 700;
   font-size: 12px;
   color: var(--color-text);
-  user-select: none;
-  padding: 2px 0;
-}
-
-.categoryCheckbox:has(input:disabled) {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.categoryCheckbox input[type='checkbox'] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 13px;
-  height: 13px;
-  border: 2px solid var(--color-frame);
   background: var(--color-bg);
-  flex-shrink: 0;
+  border: 2px solid var(--color-frame);
   cursor: pointer;
-  transition: background-color 0.1s;
+  user-select: none;
+  transition: transform 0.12s, background-color 0.12s, color 0.12s, box-shadow 0.12s;
 }
 
-.categoryCheckbox input[type='checkbox']:checked {
+.categoryChip:hover:not(:disabled):not([data-active='true']) {
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0 var(--color-frame);
+}
+
+.categoryChip[data-active='true'] {
+  color: var(--color-on-accent);
   background: var(--color-accent);
+  box-shadow: 3px 3px 0 var(--color-frame);
 }
 
-.categoryCheckbox input[type='checkbox']:disabled {
+.categoryChip:disabled {
   cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .player {
@@ -322,14 +347,6 @@
 }
 
 @media (max-width: 560px) {
-  .hostPanel {
-    grid-template-columns: 1fr;
-  }
-
-  .categoryGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .player {
     align-items: flex-start;
     gap: 12px;

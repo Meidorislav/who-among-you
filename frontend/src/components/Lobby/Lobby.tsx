@@ -148,46 +148,51 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
       {isHost && (
         <section className={styles.hostPanel} aria-label={t('lobby.hostPanel')}>
           <div className={styles.hostTitle}>{t('lobby.hostPanel')}</div>
-          <label className={styles.setting}>
-            <span>{t('lobby.questionCount')}</span>
-            <select
-              value={settings.question_count}
-              disabled={connection !== 'open'}
-              onChange={(event) =>
-                updateSettings(Number(event.target.value), settings.round_duration_seconds, selectedCategories)
-              }
-            >
-              {QUESTION_OPTIONS.map((count) => (
-                <option key={count} value={count}>
-                  {count}
-                </option>
-              ))}
-              <option value={0}>{t('lobby.allQuestions')}</option>
-            </select>
-          </label>
 
-          <label className={styles.setting}>
-            <span>{t('lobby.roundTime')}</span>
-            <select
-              value={settings.round_duration_seconds}
-              disabled={connection !== 'open'}
-              onChange={(event) =>
-                updateSettings(settings.question_count, Number(event.target.value), selectedCategories)
-              }
-            >
-              {ROUND_TIME_OPTIONS.map((seconds) => (
-                <option key={seconds} value={seconds}>
-                  {t('lobby.seconds', { count: seconds })}
-                </option>
+          <div className={styles.setting}>
+            <span className={styles.settingLabel}>{t('lobby.questionCount')}</span>
+            <div className={styles.segmented} role="group" aria-label={t('lobby.questionCount')}>
+              {[...QUESTION_OPTIONS, 0].map((count) => (
+                <button
+                  key={count}
+                  type="button"
+                  className={styles.segment}
+                  data-active={settings.question_count === count}
+                  disabled={connection !== 'open'}
+                  onClick={() =>
+                    updateSettings(count, settings.round_duration_seconds, selectedCategories)
+                  }
+                >
+                  {count === 0 ? t('lobby.allQuestions') : count}
+                </button>
               ))}
-              <option value={0}>{t('lobby.noTimeLimit')}</option>
-            </select>
-          </label>
+            </div>
+          </div>
+
+          <div className={styles.setting}>
+            <span className={styles.settingLabel}>{t('lobby.roundTime')}</span>
+            <div className={styles.segmented} role="group" aria-label={t('lobby.roundTime')}>
+              {[...ROUND_TIME_OPTIONS, 0].map((seconds) => (
+                <button
+                  key={seconds}
+                  type="button"
+                  className={styles.segment}
+                  data-active={settings.round_duration_seconds === seconds}
+                  disabled={connection !== 'open'}
+                  onClick={() =>
+                    updateSettings(settings.question_count, seconds, selectedCategories)
+                  }
+                >
+                  {seconds === 0 ? t('lobby.noTimeLimit') : t('lobby.seconds', { count: seconds })}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {availableCategories.length > 0 && (
             <div className={styles.categoriesSection}>
               <div className={styles.categoriesHeader}>
-                <span className={styles.categoriesLabel}>{t('lobby.categories')}</span>
+                <span className={styles.settingLabel}>{t('lobby.categories')}</span>
                 {!allSelected && (
                   <button
                     type="button"
@@ -199,17 +204,18 @@ const LobbyView = ({ code, session, initialLobby }: LobbyViewProps) => {
                   </button>
                 )}
               </div>
-              <div className={styles.categoryGrid}>
+              <div className={styles.categoryChips}>
                 {availableCategories.map((cat) => (
-                  <label key={cat} className={styles.categoryCheckbox}>
-                    <input
-                      type="checkbox"
-                      checked={isCategorySelected(cat)}
-                      disabled={connection !== 'open'}
-                      onChange={() => toggleCategory(cat)}
-                    />
+                  <button
+                    key={cat}
+                    type="button"
+                    className={styles.categoryChip}
+                    data-active={isCategorySelected(cat)}
+                    disabled={connection !== 'open'}
+                    onClick={() => toggleCategory(cat)}
+                  >
                     {t(`lobby.categoryNames.${cat}`, { defaultValue: cat })}
-                  </label>
+                  </button>
                 ))}
               </div>
             </div>
